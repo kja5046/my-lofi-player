@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FocusOn - Perfect Edition</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #2eb398;
+    --primary-soft: #eaf7f4;
+    --bg: #f8fafb;
+    --card: #ffffff;
+    --text: #2d3436;
+    --text-light: #9494b8;
+    --border: #edf2f7;
+    --danger: #fc3d3d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background-color: var(--bg); color: var(--text); font-family: 'Pretendard', sans-serif; overflow-x: hidden; }
+  
+  .nav { background: white; padding: 0 20px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; height: 65px; align-items: center; }
+  .nav-item { cursor: pointer; font-size: 14px; font-weight: 700; color: var(--text-light); padding: 10px 15px; border-radius: 12px; transition: 0.2s; }
+  .nav-item.active { color: var(--primary); background: var(--primary-soft); }
+
+  .container { max-width: 600px; margin: 25px auto; padding: 0 20px; }
+  .card { background: var(--card); border-radius: 28px; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.03); border: 1px solid var(--border); margin-bottom: 20px; }
+  
+  .chart-container { display: flex; align-items: flex-end; justify-content: space-between; height: 120px; padding-top: 20px; }
+  .chart-bar-wrapper { display: flex; flex-direction: column; align-items: center; flex: 1; }
+  .chart-bar { width: 28px; background: var(--primary-soft); border-radius: 6px 6px 3px 3px; transition: height 0.5s ease; }
+  .chart-bar.today { background: var(--primary); }
+  .chart-date { font-size: 10px; color: var(--text-light); margin-top: 8px; font-weight: 600; }
+
+  .subject-badge { display: inline-block; padding: 4px 12px; border-radius: 8px; font-size: 13px; font-weight: 700; line-height: 1.4; white-space: nowrap; }
+
+  .timer-box { background: #f0f7f5; border: 1.5px solid #d1ede6; border-radius: 24px; padding: 40px 20px; text-align: center; margin-bottom: 25px; }
+  .timer-num { font-size: 54px; font-weight: 800; color: var(--primary); font-variant-numeric: tabular-nums; letter-spacing: -1px; }
+
+  .record-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  .record-table th { font-size: 12px; color: var(--text-light); font-weight: 600; padding: 12px 5px; border-bottom: 1px solid var(--border); text-align: center; }
+  .record-table th:nth-child(1) { width: 120px; } 
+  .record-table th:nth-child(2) { width: 110px; }
+  .record-table th:nth-child(3) { width: 100px; }
+  .record-table th:nth-child(4) { width: 80px; } 
+  .record-table th:nth-child(5) { width: 60px; } 
+
+  .record-table td { padding: 16px 5px; border-bottom: 1px solid #f8f9fa; text-align: center; vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .input-label { display: block; font-size: 12px; font-weight: 700; color: var(--text-light); margin-bottom: 8px; margin-left: 5px; }
+  .input-field { width: 100%; padding: 16px; border-radius: 16px; border: 1.5px solid var(--border); background: #fcfdfe; font-family: inherit; font-size: 15px; outline: none; margin-bottom: 15px; }
+  .input-field:focus { border-color: var(--primary); }
+  
+  .btn-submit { width: 100%; padding: 20px; border-radius: 18px; border: none; background: var(--primary); color: white; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.2s; }
+  .btn-submit:active { transform: scale(0.98); }
+
+  .subject-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+  .subject-item-card { background: white; border-radius: 24px; padding: 24px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px; cursor: pointer; }
+  .sub-color-indicator { width: 45px; height: 7px; border-radius: 10px; margin-bottom: 5px; }
+
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .report-modal { background: white; border-radius: 32px; width: 100%; max-width: 480px; padding: 35px; animation: slideUp 0.3s ease; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+  @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+const COLORS = ["#2eb398", "#4a90e2", "#ff6b81", "#ffa502", "#a29bfe", "#ff78ae", "#00d2d3", "#e67e22"];
+
+function App() {
+  const [view, setView] = useState('home');
+  const [subjects, setSubjects] = useState(() => JSON.parse(localStorage.getItem('vFinal_sub') || '[]'));
+  const [sessions, setSessions] = useState(() => JSON.parse(localStorage.getItem('vFinal_sess') || '[]'));
+  
+  const [selectedReport, setSelectedReport] = useState(null);
+  const [time, setTime] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+  const [isFinished, setIsFinished] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const timerRef = useRef(null);
+
+  const [logDate, setLogDate] = useState(new Date().toISOString().split('T')[0]);
+  const [selectedSub, setSelectedSub] = useState('');
+  const [correct, setCorrect] = useState('');
+  const [total, setTotal] = useState('');
+  const [newSubName, setNewSubName] = useState('');
+  const [newSubColor, setNewSubColor] = useState(COLORS[0]);
+
+  useEffect(() => {
+    localStorage.setItem('vFinal_sub', JSON.stringify(subjects));
+    localStorage.setItem('vFinal_sess', JSON.stringify(sessions));
+  }, [subjects, sessions]);
+
+  const toggleTimer = () => {
+    if (!isRunning) {
+      setIsRunning(true);
+      timerRef.current = setInterval(() => setTime(prev => prev + 1), 1000);
+    } else {
+      clearInterval(timerRef.current);
+      setIsRunning(false);
+      setIsFinished(true);
+    }
+  };
+
+  const saveSession = () => {
+    const score = total > 0 ? Math.round((correct / total) * 100) : 0;
+    const newSession = {
+      id: Date.now(),
+      subject: selectedSub,
+      duration: time,
+      score,
+      scoreLabel: total > 0 ? `${correct} / ${total}` : "-",
+      date: logDate
+    };
+    setSessions([newSession, ...sessions]);
+    setTime(0); setIsFinished(false); setCorrect(''); setTotal(''); setView('home');
+  };
+
+  const getWeeklyData = () => {
+    const data = [];
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split('T')[0];
+      const dayMins = sessions.filter(s => s.date === dateStr).reduce((acc, cur) => acc + cur.duration, 0) / 60;
+      data.push({ label: dateStr.split('-')[2], mins: dayMins, isToday: i === 0 });
+    }
+    const maxMins = Math.max(...data.map(d => d.mins), 60);
+    return data.map(d => ({ ...d, height: (d.mins / maxMins) * 100 }));
+  };
+
+  const getSubStats = (name) => {
+    const subSessions = sessions.filter(s => s.subject === name);
+    const totalSec = subSessions.reduce((acc, cur) => acc + cur.duration, 0);
+    const count = subSessions.length;
+    const avgSecTotal = count > 0 ? Math.floor(totalSec / count) : 0;
+    const avgMins = Math.floor(avgSecTotal / 60);
+    const avgSec = avgSecTotal % 60;
+    const avgScore = count > 0 ? Math.round(subSessions.reduce((acc, cur) => acc + cur.score, 0) / count) : 0;
+    return { 
+      mins: Math.floor(totalSec / 60), 
+      avgMins, 
+      avgSec, 
+      avgScore, 
+      progress: Math.min(Math.round(totalSec / 300 * 100), 100) 
+    };
+  };
+
+  return (
+    <div>
+      <nav className="nav">
+        <div style={{fontSize: '18px', fontWeight: '900', color: 'var(--primary)'}}>FocusOn</div>
+        <div style={{display: 'flex', gap: '5px'}}>
+          <div className={`nav-item ${view === 'home' ? 'active' : ''}`} onClick={() => setView('home')}>홈</div>
+          <div className={`nav-item ${view === 'timer' ? 'active' : ''}`} onClick={() => setView('timer')}>타이머</div>
+          <div className={`nav-item ${view === 'manage' ? 'active' : ''}`} onClick={() => setView('manage')}>과목관리</div>
+        </div>
+      </nav>
+
+      <div className="container">
+        {view === 'home' && (
+          <div>
+            <div className="card">
+              <h3 style={{fontSize: '16px', fontWeight: '800', marginBottom: '5px'}}>주간 학습 리포트</h3>
+              <div className="chart-container">
+                {getWeeklyData().map((d, i) => (
+                  <div key={i} className="chart-bar-wrapper">
+                    <div className={`chart-bar ${d.isToday ? 'today' : ''}`} style={{ height: `${d.height}%` }}></div>
+                    <div className="chart-date">{d.label}일</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <div className="card" style={{padding: '20px 15px'}}>
+              <h3 style={{marginBottom: '15px', fontWeight: '800', paddingLeft: '10px'}}>최근 기록</h3>
+              <table className="record-table">
+                <thead>
+                  <tr>
+                    <th>과목</th>
+                    <th>학습시간</th>
+                    <th>정답/문항</th>
+                    <th>정답률</th>
+                    <th>관리</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sessions.slice(0, 10).map(s => {
+                    const sub = subjects.find(x => x.name === s.subject);
+                    return (
+                      <tr key={s.id}>
+                        <td>
+                          <span className="subject-badge" style={{ background: (sub?.color || '#eee') + '25', color: sub?.color || '#999' }}>
+                            {s.subject}
+                          </span>
+                          <div style={{fontSize:'9px', color:'#ccc', marginTop:'2px'}}>{s.date}</div>
+                        </td>
+                        <td style={{fontSize: '14px', fontWeight: '600'}}>{Math.floor(s.duration / 60)}분 {s.duration % 60}초</td>
+                        <td style={{fontSize: '14px', color: 'var(--text-light)', fontWeight: '500'}}>{s.scoreLabel}</td>
+                        <td style={{fontWeight: '800', color: sub?.color || 'var(--primary)', fontSize: '15px'}}>{s.score}%</td>
+                        <td>
+                          <button style={{border:'none', background:'none', color: 'var(--danger)', fontSize: '12px', cursor: 'pointer', fontWeight: '600'}} 
+                            onClick={() => {if(confirm('삭제하시겠습니까?')) setSessions(sessions.filter(x => x.id !== s.id))}}>삭제</button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                  {sessions.length === 0 && <tr><td colSpan="5" style={{padding:'40px', color:'#ccc', textAlign:'center'}}>기록이 없습니다.</td></tr>}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {view === 'timer' && (
+          <div className="card">
+            <div className="timer-box">
+              <div className="timer-num">{new Date(time * 1000).toISOString().substr(11, 8)}</div>
+            </div>
+            {!isFinished ? (
+              <div style={{ position: 'relative' }}>
+                <label className="input-label">학습 날짜</label>
+                <input type="date" className="input-field" value={logDate} onChange={e => setLogDate(e.target.value)} disabled={isRunning} />
+                
+                <label className="input-label">과목 선택</label>
+                <div onClick={() => !isRunning && setIsDropdownOpen(!isDropdownOpen)} style={{width: '100%', padding: '18px', borderRadius: '18px', border: '1.5px solid var(--border)', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom:'20px'}}>
+                  {selectedSub ? <span className="subject-badge" style={{ background: (subjects.find(s => s.name === selectedSub)?.color || '#eee') + '25', color: subjects.find(s => s.name === selectedSub)?.color || '#999' }}>{selectedSub}</span> : <span style={{ color: '#ccc' }}>과목 선택</span>}
+                  <span style={{fontSize: '12px', color: '#9494b8'}}>{isDropdownOpen ? '▲' : '▼'}</span>
+                </div>
+                {isDropdownOpen && <div style={{position: 'absolute', top: '100%', left: 0, right: 0, background: 'white', borderRadius: '20px', boxShadow: '0 10px 30px rgba(0,0,0,0.1)', border: '1px solid var(--border)', zIndex: 10, padding: '10px'}}>
+                  {subjects.map(sub => <div key={sub.id} onClick={() => { setSelectedSub(sub.name); setIsDropdownOpen(false); }} style={{ padding: '10px', cursor: 'pointer' }}><span className="subject-badge" style={{ background: sub.color + '25', color: sub.color }}>{sub.name}</span></div>)}
+                </div>}
+                <button className="btn-submit" onClick={toggleTimer} style={{background: isRunning ? '#888' : 'var(--primary)'}}>{isRunning ? '정지하기' : '학습 시작'}</button>
+              </div>
+            ) : (
+              <div>
+                <div style={{display:'flex', gap:'15px', marginBottom:'20px'}}>
+                  <div style={{flex:1}}><label className="input-label">맞힌 수</label><input type="number" className="input-field" value={correct} onChange={e => setCorrect(e.target.value)} /></div>
+                  <div style={{flex:1}}><label className="input-label">전체 문항</label><input type="number" className="input-field" value={total} onChange={e => setTotal(e.target.value)} /></div>
+                </div>
+                <button className="btn-submit" onClick={saveSession}>기록 저장</button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {view === 'manage' && (
+          <div>
+            <div className="card">
+              <h3 style={{marginBottom:'15px', fontWeight:'800'}}>새 과목 등록</h3>
+              <input className="input-field" placeholder="과목 이름" value={newSubName} onChange={(e)=>setNewSubName(e.target.value)} />
+              <div style={{display:'flex', flexWrap:'wrap', gap:'12px', marginBottom:'25px'}}>
+                {COLORS.map(c => <div key={c} onClick={()=>setNewSubColor(c)} style={{width:'34px', height:'34px', borderRadius:'10px', background:c, cursor:'pointer', border: newSubColor===c ? '3px solid #333' : '3px solid transparent'}} />)}
+              </div>
+              <button className="btn-submit" style={{background: newSubColor}} onClick={()=>{if(!newSubName) return; setSubjects([...subjects, {id:Date.now(), name:newSubName, color:newSubColor}]); setNewSubName('');}}>추가하기</button>
+            </div>
+            <div className="subject-grid">
+              {subjects.map(sub => {
+                const stats = getSubStats(sub.name);
+                return (
+                  <div className="subject-item-card" key={sub.id} onClick={() => setSelectedReport(sub)}>
+                    <div className="sub-color-indicator" style={{background: sub.color}}></div>
+                    <div className="sub-card-name" style={{fontWeight:'700'}}>{sub.name}</div>
+                    <div style={{display:'flex', gap:'12px', fontSize:'14px', color:'var(--text-light)'}}>
+                      <span>⏱ {stats.mins}분</span>
+                      <span>📊 {stats.avgScore}%</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {selectedReport && (
+          <div className="modal-overlay" onClick={() => setSelectedReport(null)}>
+            <div className="report-modal" onClick={e => e.stopPropagation()}>
+              <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'30px'}}>
+                <h2 style={{fontWeight:'800'}}>{selectedReport.name} 리포트</h2>
+                <button onClick={() => setSelectedReport(null)} style={{background:'none', border:'none', fontSize:'28px', color:'#ccc', cursor:'pointer'}}>×</button>
+              </div>
+              <div style={{display:'flex', alignItems:'center', gap:'30px', marginBottom:'40px'}}>
+                <div style={{width:'110px', height:'110px', borderRadius:'50%', background: `conic-gradient(${selectedReport.color} ${getSubStats(selectedReport.name).progress}%, #f0f2f5 0)`, display:'flex', alignItems:'center', justifyContent:'center', position:'relative'}}>
+                  <div style={{background:'white', width:'85px', height:'85px', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', fontWeight:'800', fontSize:'22px', position:'absolute'}}>
+                    {getSubStats(selectedReport.name).progress}%
+                  </div>
+                </div>
+                <div>
+                  <div style={{fontSize:'14px', color:'var(--text-light)', fontWeight:'600'}}>회당 평균 학습</div>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', color: selectedReport.color }}>
+                    <span style={{ fontSize: '32px', fontWeight: '800' }}>{getSubStats(selectedReport.name).avgMins}</span>
+                    <span style={{ fontSize: '16px', fontWeight: '700' }}>분</span>
+                    <span style={{ fontSize: '32px', fontWeight: '800', marginLeft: '4px' }}>{getSubStats(selectedReport.name).avgSec}</span>
+                    <span style={{ fontSize: '16px', fontWeight: '700' }}>초</span>
+                  </div>
+                </div>
+              </div>
+              <div style={{marginTop:'30px', paddingTop:'30px', borderTop:'1px solid var(--border)'}}>
+                <div style={{display:'flex', justifyContent:'space-between', marginBottom:'12px', fontWeight:'700'}}>
+                  <span>평균 정답률</span>
+                  <span style={{color: selectedReport.color}}>{getSubStats(selectedReport.name).avgScore}%</span>
+                </div>
+                <div style={{height:'12px', background:'#f0f2f5', borderRadius:'10px', overflow:'hidden'}}>
+                  <div style={{width: `${getSubStats(selectedReport.name).avgScore}%`, background: selectedReport.color, height:'100%'}}></div>
+                </div>
+              </div>
+              <button className="btn-submit" style={{marginTop:'40px', background:'#f8f9fa', color: '#adb5bd'}} 
+                onClick={() => {if(confirm('과목을 삭제하시겠습니까?')) { setSubjects(subjects.filter(s => s.id !== selectedReport.id)); setSessions(sessions.filter(s => s.subject !== selectedReport.name)); setSelectedReport(null);}}}>
+                과목 삭제
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
