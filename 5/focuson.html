@@ -1,83 +1,373 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FocusOn - Clean Edition</title>
+<title>FocusOn</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --primary: #2eb398;
-    --primary-soft: #eaf7f4;
-    --bg: #f8fafb;
+    --primary: #3ecf8e;
+    --primary-dark: #27b577;
+    --primary-glow: rgba(62,207,142,0.18);
+    --primary-soft: #edfaf4;
+    --bg: #f2f4f8;
     --card: #ffffff;
-    --text: #2d3436;
-    --text-light: #9494b8;
-    --border: #edf2f7;
-    --danger: #fc3d3d;
+    --text: #1a1d27;
+    --text-mid: #6b7280;
+    --text-light: #b0b8c8;
+    --border: #e8ecf2;
+    --danger: #ff4d6d;
+    --shadow-card: 0 2px 20px rgba(0,0,0,0.06);
+    --shadow-hover: 0 8px 30px rgba(0,0,0,0.1);
+    --nav-h: 64px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background-color: var(--bg); color: var(--text); font-family: 'Pretendard', sans-serif; overflow-x: hidden; }
-  
-  .nav { background: white; padding: 0 20px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; height: 65px; align-items: center; }
-  .nav-item { cursor: pointer; font-size: 14px; font-weight: 700; color: var(--text-light); padding: 10px 15px; border-radius: 12px; transition: 0.2s; }
-  .nav-item.active { color: var(--primary); background: var(--primary-soft); }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
 
-  .container { max-width: 600px; margin: 25px auto; padding: 0 20px; }
-  .card { background: var(--card); border-radius: 28px; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.03); border: 1px solid var(--border); margin-bottom: 20px; }
-  
-  .subject-badge { display: inline-block; padding: 4px 12px; border-radius: 8px; font-size: 13px; font-weight: 700; line-height: 1.4; white-space: nowrap; }
+  /* ─── NAV ─── */
+  .nav {
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 200;
+    height: var(--nav-h);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px;
+  }
+  .nav-logo {
+    font-family: 'Nunito', sans-serif;
+    font-size: 20px; font-weight: 900;
+    background: linear-gradient(135deg, #3ecf8e, #27b577);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .nav-tabs { display: flex; gap: 4px; background: var(--bg); border-radius: 14px; padding: 4px; }
+  .nav-tab {
+    cursor: pointer; font-size: 13px; font-weight: 700;
+    color: var(--text-light); padding: 8px 16px;
+    border-radius: 10px; transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .nav-tab.active { color: var(--primary-dark); background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
 
-  .timer-box { background: #f0f7f5; border: 1.5px solid #d1ede6; border-radius: 24px; padding: 40px 20px; text-align: center; margin-bottom: 25px; }
-  .timer-num { font-size: 54px; font-weight: 800; color: var(--primary); font-variant-numeric: tabular-nums; letter-spacing: -1px; }
+  /* ─── LAYOUT ─── */
+  .container { max-width: 620px; margin: 0 auto; padding: 24px 20px 48px; }
 
-  .record-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-  .record-table th { font-size: 12px; color: var(--text-light); font-weight: 600; padding: 12px 5px; border-bottom: 1px solid var(--border); text-align: center; }
-  .record-table th:nth-child(1) { width: 120px; } 
-  .record-table th:nth-child(2) { width: 110px; }
-  .record-table th:nth-child(3) { width: 100px; }
-  .record-table th:nth-child(4) { width: 80px; } 
-  .record-table th:nth-child(5) { width: 60px; } 
+  /* ─── CARDS ─── */
+  .card {
+    background: var(--card); border-radius: 24px;
+    padding: 24px; box-shadow: var(--shadow-card);
+    border: 1px solid var(--border); margin-bottom: 16px;
+    transition: box-shadow 0.2s;
+  }
 
-  .record-table td { padding: 16px 5px; border-bottom: 1px solid #f8f9fa; text-align: center; vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  /* ─── HOME: HERO STRIP ─── */
+  .hero-strip {
+    background: linear-gradient(135deg, #2dc08a 0%, #3ecf8e 50%, #52e3a3 100%);
+    border-radius: 28px; padding: 28px 28px 22px;
+    color: white; margin-bottom: 16px;
+    position: relative; overflow: hidden;
+    box-shadow: 0 8px 32px rgba(62,207,142,0.35);
+  }
+  .hero-strip::before {
+    content: '';
+    position: absolute; top: -40px; right: -40px;
+    width: 180px; height: 180px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 50%;
+  }
+  .hero-strip::after {
+    content: '';
+    position: absolute; bottom: -60px; right: 60px;
+    width: 120px; height: 120px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 50%;
+  }
+  .hero-greeting { font-size: 13px; font-weight: 600; opacity: 0.85; margin-bottom: 6px; }
+  .hero-title { font-family: 'Nunito', sans-serif; font-size: 26px; font-weight: 900; line-height: 1.2; margin-bottom: 18px; }
+  .hero-stats { display: flex; gap: 24px; }
+  .hero-stat-val { font-family: 'Nunito', sans-serif; font-size: 28px; font-weight: 900; line-height: 1; }
+  .hero-stat-lbl { font-size: 11px; font-weight: 600; opacity: 0.75; margin-top: 4px; }
 
-  .input-label { display: block; font-size: 12px; font-weight: 700; color: var(--text-light); margin-bottom: 8px; margin-left: 5px; }
-  .input-field { width: 100%; padding: 16px; border-radius: 16px; border: 1.5px solid var(--border); background: #fcfdfe; font-family: inherit; font-size: 15px; outline: none; margin-bottom: 15px; }
-  
-  .btn-submit { width: 100%; padding: 20px; border-radius: 18px; border: none; background: var(--primary); color: white; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.2s; }
-  .btn-submit:active { transform: scale(0.98); }
+  /* ─── SECTION TITLE ─── */
+  .section-title {
+    font-size: 13px; font-weight: 700; color: var(--text-light);
+    text-transform: uppercase; letter-spacing: 0.8px;
+    margin-bottom: 12px; padding-left: 2px;
+  }
 
-  .subject-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
-  .subject-item-card { background: white; border-radius: 24px; padding: 24px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px; cursor: pointer; }
-  .sub-color-indicator { width: 45px; height: 7px; border-radius: 10px; margin-bottom: 5px; }
+  /* ─── WEEK CHART ─── */
+  .week-chart-wrap { display: flex; align-items: flex-end; gap: 6px; height: 80px; }
+  .week-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
+  .week-bar-bg { width: 100%; border-radius: 8px; background: #f0f3f8; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; }
+  .week-bar-fill { width: 100%; border-radius: 8px; transition: height 0.6s cubic-bezier(.34,1.56,.64,1); }
+  .week-bar-fill.today { background: linear-gradient(180deg, #52e3a3, #27b577); }
+  .week-bar-fill.past { background: linear-gradient(180deg, #bde9d8, #9dd9c4); }
+  .week-label { font-size: 10px; font-weight: 700; color: var(--text-light); }
+  .week-label.today { color: var(--primary-dark); }
 
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; }
-  .report-modal { background: white; border-radius: 32px; width: 100%; max-width: 480px; padding: 35px; animation: slideUp 0.3s ease; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
-  @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  /* ─── QUICK STATS ROW ─── */
+  .quick-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .qs-card {
+    background: white; border-radius: 20px; padding: 18px 14px;
+    border: 1px solid var(--border); box-shadow: var(--shadow-card);
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+  }
+  .qs-icon { font-size: 22px; }
+  .qs-val { font-family: 'Nunito', sans-serif; font-size: 20px; font-weight: 900; color: var(--text); line-height: 1; }
+  .qs-lbl { font-size: 10px; font-weight: 600; color: var(--text-light); text-align: center; }
+
+  /* ─── SUBJECT STREAKS ─── */
+  .sub-pill-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .sub-pill {
+    display: flex; align-items: center; gap: 7px;
+    background: white; border: 1px solid var(--border);
+    border-radius: 50px; padding: 7px 14px 7px 10px;
+    font-size: 13px; font-weight: 700; cursor: pointer;
+    box-shadow: var(--shadow-card); transition: all 0.2s;
+  }
+  .sub-pill:hover { box-shadow: var(--shadow-hover); transform: translateY(-1px); }
+  .sub-pill-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ─── RECORD TABLE ─── */
+  .record-table { width: 100%; border-collapse: collapse; }
+  .record-table th {
+    font-size: 11px; font-weight: 700; color: var(--text-light);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    padding: 0 8px 12px; text-align: center; border-bottom: 1px solid var(--border);
+  }
+  .record-table th:first-child { text-align: left; }
+  .record-table td {
+    padding: 14px 8px; border-bottom: 1px solid #f5f7fa;
+    text-align: center; vertical-align: middle; font-size: 14px;
+  }
+  .record-table td:first-child { text-align: left; }
+  .record-table tr:last-child td { border-bottom: none; }
+  .sub-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700;
+  }
+  .sub-chip-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .score-pill {
+    display: inline-block; padding: 3px 10px; border-radius: 30px;
+    font-size: 13px; font-weight: 800;
+  }
+  .del-btn {
+    border: none; background: none; color: var(--text-light); font-size: 16px;
+    cursor: pointer; line-height: 1; padding: 4px; border-radius: 6px; transition: all 0.15s;
+  }
+  .del-btn:hover { color: var(--danger); background: #fff0f3; }
+
+  /* ─── TIMER ─── */
+  .timer-wrap { text-align: center; padding: 36px 20px 28px; }
+  .timer-ring {
+    width: 200px; height: 200px; margin: 0 auto 28px;
+    border-radius: 50%; position: relative;
+    display: flex; align-items: center; justify-content: center;
+    background: conic-gradient(var(--primary) 0%, #f0f3f8 0%);
+    box-shadow: 0 0 0 3px white, 0 0 0 5px var(--border);
+    transition: background 0.3s;
+  }
+  .timer-ring-inner {
+    position: absolute; width: 164px; height: 164px;
+    background: white; border-radius: 50%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .timer-num { font-family: 'Nunito', sans-serif; font-size: 36px; font-weight: 900; color: var(--text); letter-spacing: -1px; }
+  .timer-sub { font-size: 11px; font-weight: 600; color: var(--text-light); margin-top: 4px; }
+  .timer-state { font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: 0.5px; margin-top: 2px; }
+
+  /* ─── INPUTS ─── */
+  .input-label { display: block; font-size: 12px; font-weight: 700; color: var(--text-light); margin-bottom: 7px; }
+  .input-field {
+    width: 100%; padding: 15px 18px; border-radius: 16px;
+    border: 1.5px solid var(--border); background: #fafbfc;
+    font-family: inherit; font-size: 15px; font-weight: 600; outline: none; transition: border 0.2s;
+    color: var(--text); margin-bottom: 16px;
+  }
+  .input-field:focus { border-color: var(--primary); background: white; }
+  input[type="date"].input-field { cursor: pointer; }
+
+  /* ─── DROPDOWN ─── */
+  .dropdown-trigger {
+    width: 100%; padding: 15px 18px; border-radius: 16px;
+    border: 1.5px solid var(--border); background: #fafbfc;
+    cursor: pointer; display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px; transition: border 0.2s; font-weight: 600;
+  }
+  .dropdown-trigger.open { border-color: var(--primary); background: white; }
+  .dropdown-trigger:hover { border-color: #c5ccd8; }
+  .dropdown-list {
+    background: white; border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+    border: 1px solid var(--border); z-index: 20; overflow: hidden;
+    animation: fadeIn 0.15s ease;
+  }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+  .dropdown-option {
+    padding: 13px 18px; cursor: pointer; display: flex; align-items: center; gap: 10px;
+    font-size: 14px; font-weight: 700; transition: background 0.1s;
+  }
+  .dropdown-option:hover { background: #f8fafb; }
+
+  /* ─── BUTTONS ─── */
+  .btn-primary {
+    width: 100%; padding: 18px; border-radius: 18px; border: none;
+    background: linear-gradient(135deg, #3ecf8e, #27b577);
+    color: white; font-weight: 800; font-size: 16px;
+    cursor: pointer; transition: all 0.2s; font-family: inherit;
+    box-shadow: 0 4px 16px rgba(62,207,142,0.4);
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(62,207,142,0.5); }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-stop {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    box-shadow: 0 4px 16px rgba(255,107,107,0.35);
+  }
+  .btn-stop:hover { box-shadow: 0 8px 24px rgba(255,107,107,0.45); }
+  .btn-ghost {
+    width: 100%; padding: 16px; border-radius: 16px;
+    border: 1.5px solid var(--border); background: white;
+    color: var(--text-light); font-weight: 700; font-size: 14px;
+    cursor: pointer; transition: all 0.2s; font-family: inherit; margin-top: 10px;
+  }
+  .btn-ghost:hover { color: var(--danger); border-color: var(--danger); background: #fff5f7; }
+
+  /* ─── MANAGE ─── */
+  .color-swatches { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+  .color-swatch {
+    width: 32px; height: 32px; border-radius: 9px; cursor: pointer;
+    transition: all 0.15s; border: 3px solid transparent;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  }
+  .color-swatch.sel { border-color: var(--text); transform: scale(1.15); }
+  .sub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .sub-card {
+    background: white; border-radius: 22px; padding: 20px 18px;
+    border: 1px solid var(--border); cursor: pointer;
+    transition: all 0.2s; box-shadow: var(--shadow-card);
+    position: relative; overflow: hidden;
+  }
+  .sub-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  }
+  .sub-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+  .sub-card-name { font-weight: 800; font-size: 15px; margin-bottom: 10px; margin-top: 8px; }
+  .sub-card-stat { font-size: 12px; color: var(--text-mid); font-weight: 600; display: flex; align-items: center; gap: 4px; }
+
+  /* ─── MODAL ─── */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(15,20,30,0.5);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    z-index: 1000; display: flex; align-items: flex-end; justify-content: center;
+    padding: 20px;
+    animation: overlayIn 0.2s ease;
+  }
+  @keyframes overlayIn { from { opacity:0; } to { opacity:1; } }
+  .modal-sheet {
+    background: white; border-radius: 32px 32px 24px 24px;
+    width: 100%; max-width: 480px; padding: 32px 28px 28px;
+    animation: sheetUp 0.3s cubic-bezier(.34,1.56,.64,1);
+    box-shadow: 0 -4px 60px rgba(0,0,0,0.2);
+    max-height: 90vh; overflow-y: auto;
+  }
+  @keyframes sheetUp { from { transform:translateY(40px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+
+  /* ─── DONUT CHART ─── */
+  .donut-wrap {
+    display: flex; align-items: center; gap: 24px; margin: 20px 0;
+  }
+  .donut-svg { flex-shrink: 0; }
+  .stat-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .stat-row:last-child { border-bottom: none; }
+  .stat-key { font-size: 13px; color: var(--text-mid); font-weight: 600; }
+  .stat-val { font-size: 16px; font-weight: 800; }
+
+  /* ─── EMPTY ─── */
+  .empty-state { padding: 40px 20px; text-align: center; color: var(--text-light); font-weight: 600; font-size: 14px; }
+  .empty-icon { font-size: 36px; margin-bottom: 10px; }
+
+  /* ─── MINI PROGRESS BAR ─── */
+  .mini-bar { height: 6px; border-radius: 10px; background: #f0f3f8; overflow: hidden; margin-top: 8px; }
+  .mini-bar-fill { height: 100%; border-radius: 10px; transition: width 0.6s ease; }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+  .pulse { animation: pulse 1.5s infinite; }
 </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const { useState, useEffect, useRef } = React;
-const COLORS = ["#2eb398", "#4a90e2", "#ff6b81", "#ffa502", "#a29bfe", "#ff78ae", "#00d2d3", "#e67e22"];
+const { useState, useEffect, useRef, useMemo } = React;
 
+const COLORS = ["#3ecf8e","#4a90e2","#ff6b6b","#f6b93b","#a29bfe","#fd79a8","#00cec9","#e17055"];
+const DAYS_KO = ['일','월','화','수','목','금','토'];
+
+function fmt(sec) {
+  const h = Math.floor(sec/3600), m = Math.floor((sec%3600)/60), s = sec%60;
+  if (h > 0) return `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+function fmtHuman(sec) {
+  const m = Math.floor(sec/60), s = sec%60;
+  if (m === 0) return `${s}초`;
+  if (s === 0) return `${m}분`;
+  return `${m}분 ${s}초`;
+}
+function today() { return new Date().toISOString().split('T')[0]; }
+function hexAlpha(hex, a) {
+  const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+// ── DonutChart ──────────────────────────────────────────────
+function DonutChart({ pct, color, size = 100 }) {
+  const r = 40, cx = 50, cy = 50;
+  const circ = 2 * Math.PI * r;
+  const dash = (pct / 100) * circ;
+  return (
+    <svg width={size} height={size} viewBox="0 0 100 100" className="donut-svg">
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke="#f0f3f8" strokeWidth="12"/>
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke={color} strokeWidth="12"
+        strokeDasharray={`${dash} ${circ}`} strokeDashoffset={circ/4}
+        strokeLinecap="round" style={{transition:'stroke-dasharray 0.6s ease'}}/>
+      <text x="50" y="54" textAnchor="middle"
+        style={{fontSize:'20px', fontWeight:'900', fontFamily:'Nunito,sans-serif', fill: color}}>
+        {pct}%
+      </text>
+    </svg>
+  );
+}
+
+// ── App ──────────────────────────────────────────────────────
 function App() {
   const [view, setView] = useState('home');
-  const [subjects, setSubjects] = useState(() => JSON.parse(localStorage.getItem('vFinal_sub') || '[]'));
-  const [sessions, setSessions] = useState(() => JSON.parse(localStorage.getItem('vFinal_sess') || '[]'));
-  
+  const [subjects, setSubjects] = useState(() => JSON.parse(localStorage.getItem('fo_sub') || '[]'));
+  const [sessions, setSessions] = useState(() => JSON.parse(localStorage.getItem('fo_sess') || '[]'));
   const [selectedReport, setSelectedReport] = useState(null);
+
+  // timer state
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const timerRef = useRef(null);
 
-  const [logDate, setLogDate] = useState(new Date().toISOString().split('T')[0]);
+  // form state
+  const [logDate, setLogDate] = useState(today());
   const [selectedSub, setSelectedSub] = useState('');
   const [correct, setCorrect] = useState('');
   const [total, setTotal] = useState('');
@@ -85,207 +375,458 @@ function App() {
   const [newSubColor, setNewSubColor] = useState(COLORS[0]);
 
   useEffect(() => {
-    localStorage.setItem('vFinal_sub', JSON.stringify(subjects));
-    localStorage.setItem('vFinal_sess', JSON.stringify(sessions));
+    localStorage.setItem('fo_sub', JSON.stringify(subjects));
+    localStorage.setItem('fo_sess', JSON.stringify(sessions));
   }, [subjects, sessions]);
 
-  const toggleTimer = () => {
-    if (!isRunning) {
-      setIsRunning(true);
-      timerRef.current = setInterval(() => setTime(prev => prev + 1), 1000);
+  // timer
+  useEffect(() => {
+    if (isRunning) {
+      timerRef.current = setInterval(() => setTime(p => p + 1), 1000);
     } else {
       clearInterval(timerRef.current);
-      setIsRunning(false);
-      setIsFinished(true);
     }
+    return () => clearInterval(timerRef.current);
+  }, [isRunning]);
+
+  const startStop = () => {
+    if (!isRunning) { setIsRunning(true); }
+    else { setIsRunning(false); setIsFinished(true); }
   };
 
   const saveSession = () => {
-    const score = total > 0 ? Math.round((correct / total) * 100) : 0;
-    const newSession = {
-      id: Date.now(),
-      subject: selectedSub,
-      duration: time,
-      score,
-      scoreLabel: total > 0 ? `${correct} / ${total}` : "-",
-      date: logDate
-    };
-    setSessions([newSession, ...sessions]);
+    const c = Number(correct) || 0, t = Number(total) || 0;
+    const score = t > 0 ? Math.round((c / t) * 100) : null;
+    setSessions(prev => [{
+      id: Date.now(), subject: selectedSub, duration: time,
+      score, scoreLabel: t > 0 ? `${c} / ${t}` : '-', date: logDate
+    }, ...prev]);
     setTime(0); setIsFinished(false); setCorrect(''); setTotal(''); setView('home');
   };
 
-  const getSubStats = (name) => {
-    const subSessions = sessions.filter(s => s.subject === name);
-    const totalSec = subSessions.reduce((acc, cur) => acc + cur.duration, 0);
-    const count = subSessions.length;
-    const avgSecTotal = count > 0 ? Math.floor(totalSec / count) : 0;
-    const avgMins = Math.floor(avgSecTotal / 60);
-    const avgSec = avgSecTotal % 60;
-    const avgScore = count > 0 ? Math.round(subSessions.reduce((acc, cur) => acc + cur.score, 0) / count) : 0;
-    return { 
-      mins: Math.floor(totalSec / 60), 
-      avgMins, avgSec, avgScore, 
-      progress: Math.min(Math.round(totalSec / 300 * 100), 100) 
-    };
+  const discardSession = () => {
+    setTime(0); setIsFinished(false); setCorrect(''); setTotal('');
   };
 
+  // stats helpers
+  const getSubStats = (name) => {
+    const ss = sessions.filter(s => s.subject === name);
+    const totalSec = ss.reduce((a, s) => a + s.duration, 0);
+    const scored = ss.filter(s => s.score !== null);
+    const avgScore = scored.length > 0 ? Math.round(scored.reduce((a,s) => a+s.score, 0)/scored.length) : 0;
+    const avgSec = ss.length > 0 ? Math.floor(totalSec/ss.length) : 0;
+    return { totalSec, avgScore, avgSec, count: ss.length };
+  };
+
+  const weeklyData = useMemo(() => {
+    const arr = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(); d.setDate(d.getDate() - i);
+      const ds = d.toISOString().split('T')[0];
+      const secs = sessions.filter(s => s.date === ds).reduce((a,s) => a+s.duration, 0);
+      const day = DAYS_KO[d.getDay()];
+      arr.push({ ds, day, secs, isToday: i===0 });
+    }
+    const maxSecs = Math.max(...arr.map(d => d.secs), 1);
+    return arr.map(d => ({ ...d, pct: Math.max((d.secs / maxSecs) * 100, d.secs > 0 ? 8 : 0) }));
+  }, [sessions]);
+
+  const todayTotal = sessions.filter(s => s.date === today()).reduce((a,s) => a+s.duration, 0);
+  const todayCount = sessions.filter(s => s.date === today()).length;
+  const allTotal = sessions.reduce((a,s) => a+s.duration, 0);
+  const allScored = sessions.filter(s => s.score !== null);
+  const avgAcc = allScored.length > 0 ? Math.round(allScored.reduce((a,s) => a+s.score, 0)/allScored.length) : 0;
+
+  // ─── VIEWS ──────────────────────────────────────────────────
   return (
     <div>
+      {/* NAV */}
       <nav className="nav">
-        <div style={{fontSize: '18px', fontWeight: '900', color: 'var(--primary)'}}>FocusOn</div>
-        <div style={{display: 'flex', gap: '5px'}}>
-          <div className={`nav-item ${view === 'home' ? 'active' : ''}`} onClick={() => setView('home')}>홈</div>
-          <div className={`nav-item ${view === 'timer' ? 'active' : ''}`} onClick={() => setView('timer')}>타이머</div>
-          <div className={`nav-item ${view === 'manage' ? 'active' : ''}`} onClick={() => setView('manage')}>과목관리</div>
+        <div className="nav-logo">FocusOn</div>
+        <div className="nav-tabs">
+          {[['home','홈'],['timer','타이머'],['manage','과목관리']].map(([v,l]) => (
+            <div key={v} className={`nav-tab ${view===v?'active':''}`} onClick={() => setView(v)}>{l}</div>
+          ))}
         </div>
       </nav>
 
       <div className="container">
+
+        {/* ══════ HOME ══════ */}
         {view === 'home' && (
-          <div className="card" style={{padding: '25px 15px'}}>
-            <h3 style={{marginBottom: '20px', fontWeight: '800', paddingLeft: '10px'}}>최근 기록</h3>
-            <table className="record-table">
-              <thead>
-                <tr>
-                  <th>과목</th>
-                  <th>학습시간</th>
-                  <th>정답/문항</th>
-                  <th>정답률</th>
-                  <th>관리</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sessions.slice(0, 15).map(s => {
-                  const sub = subjects.find(x => x.name === s.subject);
-                  return (
-                    <tr key={s.id}>
-                      <td>
-                        <span className="subject-badge" style={{ background: (sub?.color || '#eee') + '25', color: sub?.color || '#999' }}>
-                          {s.subject}
+          <>
+            {/* Hero */}
+            <div className="hero-strip">
+              <div className="hero-greeting">오늘도 화이팅 🎯</div>
+              <div className="hero-title">꾸준함이<br/>실력이 됩니다</div>
+              <div className="hero-stats">
+                <div>
+                  <div className="hero-stat-val">{Math.floor(todayTotal/60)}<span style={{fontSize:16,fontWeight:700}}>분</span></div>
+                  <div className="hero-stat-lbl">오늘 학습</div>
+                </div>
+                <div style={{width:'1px', background:'rgba(255,255,255,0.3)', margin:'2px 0'}}></div>
+                <div>
+                  <div className="hero-stat-val">{todayCount}<span style={{fontSize:16,fontWeight:700}}>회</span></div>
+                  <div className="hero-stat-lbl">오늘 세션</div>
+                </div>
+                <div style={{width:'1px', background:'rgba(255,255,255,0.3)', margin:'2px 0'}}></div>
+                <div>
+                  <div className="hero-stat-val">{allScored.length > 0 ? avgAcc : '—'}{allScored.length > 0 && <span style={{fontSize:16,fontWeight:700}}>%</span>}</div>
+                  <div className="hero-stat-lbl">평균 정답률</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick stats */}
+            <div className="quick-stats">
+              <div className="qs-card">
+                <div className="qs-icon">📚</div>
+                <div className="qs-val">{subjects.length}</div>
+                <div className="qs-lbl">과목</div>
+              </div>
+              <div className="qs-card">
+                <div className="qs-icon">⏱</div>
+                <div className="qs-val">{Math.floor(allTotal/3600) > 0 ? Math.floor(allTotal/3600)+'h' : Math.floor(allTotal/60)+'m'}</div>
+                <div className="qs-lbl">총 학습시간</div>
+              </div>
+              <div className="qs-card">
+                <div className="qs-icon">✍️</div>
+                <div className="qs-val">{sessions.length}</div>
+                <div className="qs-lbl">총 세션</div>
+              </div>
+            </div>
+
+            {/* Weekly chart */}
+            <div className="card">
+              <div className="section-title">주간 학습 현황</div>
+              <div className="week-chart-wrap">
+                {weeklyData.map((d,i) => (
+                  <div key={i} className="week-col">
+                    <div className="week-bar-bg" style={{height: '64px', flex:'none', width:'100%', borderRadius:'10px', position:'relative', overflow:'hidden'}}>
+                      <div className={`week-bar-fill ${d.isToday?'today':'past'}`}
+                        style={{height: `${d.pct}%`, position:'absolute', bottom:0, left:0, right:0}}/>
+                    </div>
+                    <div className={`week-label ${d.isToday?'today':''}`}>
+                      {d.isToday ? '오늘' : d.day}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {weeklyData.some(d=>d.secs>0) && (
+                <div style={{marginTop:12, fontSize:12, color:'var(--text-light)', fontWeight:600, textAlign:'right'}}>
+                  이번 주 {Math.floor(weeklyData.reduce((a,d)=>a+d.secs,0)/60)}분 학습
+                </div>
+              )}
+            </div>
+
+            {/* Subject pills */}
+            {subjects.length > 0 && (
+              <div style={{marginBottom:16}}>
+                <div className="section-title">과목별 현황</div>
+                <div className="sub-pill-row">
+                  {subjects.map(sub => {
+                    const st = getSubStats(sub.name);
+                    return (
+                      <div key={sub.id} className="sub-pill" onClick={() => setSelectedReport(sub)}>
+                        <div className="sub-pill-dot" style={{background: sub.color}}/>
+                        <span style={{color: sub.color}}>{sub.name}</span>
+                        <span style={{color:'var(--text-light)', fontWeight:600, fontSize:12}}>
+                          {Math.floor(st.totalSec/60)}분
                         </span>
-                        <div style={{fontSize:'9px', color:'#ccc', marginTop:'2px'}}>{s.date}</div>
-                      </td>
-                      <td style={{fontSize: '14px', fontWeight: '600'}}>{Math.floor(s.duration / 60)}분 {s.duration % 60}초</td>
-                      <td style={{fontSize: '14px', color: 'var(--text-light)', fontWeight: '500'}}>{s.scoreLabel}</td>
-                      <td style={{fontWeight: '800', color: sub?.color || 'var(--primary)', fontSize: '15px'}}>{s.score}%</td>
-                      <td>
-                        <button style={{border:'none', background:'none', color: 'var(--danger)', fontSize: '12px', cursor: 'pointer', fontWeight: '600'}} 
-                          onClick={() => {if(confirm('삭제하시겠습니까?')) setSessions(sessions.filter(x => x.id !== s.id))}}>삭제</button>
-                      </td>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Recent records */}
+            <div className="card" style={{padding:'20px'}}>
+              <div className="section-title">최근 기록</div>
+              {sessions.length === 0 ? (
+                <div className="empty-state">
+                  <div className="empty-icon">📋</div>
+                  아직 학습 기록이 없어요.<br/>타이머로 첫 세션을 시작해보세요!
+                </div>
+              ) : (
+                <table className="record-table">
+                  <thead>
+                    <tr>
+                      <th>과목</th>
+                      <th>시간</th>
+                      <th>정답/문항</th>
+                      <th>정답률</th>
+                      <th></th>
                     </tr>
-                  );
-                })}
-                {sessions.length === 0 && <tr><td colSpan="5" style={{padding:'60px', color:'#ccc', textAlign:'center'}}>기록이 없습니다.</td></tr>}
-              </tbody>
-            </table>
-          </div>
+                  </thead>
+                  <tbody>
+                    {sessions.slice(0, 10).map(s => {
+                      const sub = subjects.find(x => x.name === s.subject);
+                      const color = sub?.color || '#b0b8c8';
+                      return (
+                        <tr key={s.id}>
+                          <td>
+                            <div className="sub-chip" style={{background: hexAlpha(color, 0.12), color}}>
+                              <div className="sub-chip-dot" style={{background: color}}/>
+                              {s.subject}
+                            </div>
+                            <div style={{fontSize:10, color:'var(--text-light)', marginTop:3, paddingLeft:2}}>{s.date}</div>
+                          </td>
+                          <td style={{fontWeight:700, color:'var(--text)'}}>{fmtHuman(s.duration)}</td>
+                          <td style={{color:'var(--text-mid)', fontWeight:600}}>{s.scoreLabel}</td>
+                          <td>
+                            {s.score !== null ? (
+                              <span className="score-pill" style={{background: hexAlpha(color, 0.12), color}}>{s.score}%</span>
+                            ) : (
+                              <span style={{color:'var(--text-light)', fontSize:13}}>—</span>
+                            )}
+                          </td>
+                          <td>
+                            <button className="del-btn"
+                              onClick={() => { if(confirm('삭제하시겠습니까?')) setSessions(p => p.filter(x => x.id !== s.id)); }}>
+                              ×
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </>
         )}
 
+        {/* ══════ TIMER ══════ */}
         {view === 'timer' && (
           <div className="card">
-            <div className="timer-box">
-              <div className="timer-num">{new Date(time * 1000).toISOString().substr(11, 8)}</div>
-            </div>
-            {!isFinished ? (
-              <div style={{ position: 'relative' }}>
-                <label className="input-label">학습 날짜</label>
-                <input type="date" className="input-field" value={logDate} onChange={e => setLogDate(e.target.value)} disabled={isRunning} />
-                
-                <label className="input-label">과목 선택</label>
-                <div onClick={() => !isRunning && setIsDropdownOpen(!isDropdownOpen)} style={{width: '100%', padding: '18px', borderRadius: '18px', border: '1.5px solid var(--border)', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom:'20px'}}>
-                  {selectedSub ? <span className="subject-badge" style={{ background: (subjects.find(s => s.name === selectedSub)?.color || '#eee') + '25', color: subjects.find(s => s.name === selectedSub)?.color || '#999' }}>{selectedSub}</span> : <span style={{ color: '#ccc' }}>과목 선택</span>}
-                  <span style={{fontSize: '12px', color: '#9494b8'}}>{isDropdownOpen ? '▲' : '▼'}</span>
+            {/* Timer display */}
+            <div className="timer-wrap">
+              <div className="timer-ring" style={{
+                background: isRunning
+                  ? `conic-gradient(#3ecf8e ${Math.min((time/3600)*100, 100)}%, #f0f3f8 0%)`
+                  : 'conic-gradient(#f0f3f8 100%, #f0f3f8 0%)'
+              }}>
+                <div className="timer-ring-inner">
+                  <div className="timer-num">{fmt(time)}</div>
+                  {isRunning && <div className="timer-state pulse">학습 중</div>}
+                  {!isRunning && time === 0 && <div className="timer-sub">준비 완료</div>}
+                  {!isRunning && time > 0 && !isFinished && <div className="timer-sub">일시정지</div>}
                 </div>
-                {isDropdownOpen && <div style={{position: 'absolute', top: '100%', left: 0, right: 0, background: 'white', borderRadius: '20px', boxShadow: '0 10px 30px rgba(0,0,0,0.1)', border: '1px solid var(--border)', zIndex: 10, padding: '10px'}}>
-                  {subjects.map(sub => <div key={sub.id} onClick={() => { setSelectedSub(sub.name); setIsDropdownOpen(false); }} style={{ padding: '10px', cursor: 'pointer' }}><span className="subject-badge" style={{ background: sub.color + '25', color: sub.color }}>{sub.name}</span></div>)}
-                </div>}
-                <button className="btn-submit" onClick={toggleTimer} style={{background: isRunning ? '#888' : 'var(--primary)'}}>{isRunning ? '정지하기' : '학습 시작'}</button>
+              </div>
+            </div>
+
+            {!isFinished ? (
+              <div style={{position:'relative'}}>
+                <label className="input-label">학습 날짜</label>
+                <input type="date" className="input-field" value={logDate}
+                  onChange={e => setLogDate(e.target.value)} disabled={isRunning}/>
+
+                <label className="input-label">과목 선택</label>
+                <div className={`dropdown-trigger ${isDropdownOpen?'open':''}`}
+                  onClick={() => !isRunning && setIsDropdownOpen(p => !p)}>
+                  {selectedSub
+                    ? (() => { const sub = subjects.find(s=>s.name===selectedSub); return (
+                        <div className="sub-chip" style={{background: hexAlpha(sub?.color||'#ccc',0.12), color: sub?.color||'#ccc', padding:'3px 10px'}}>
+                          <div className="sub-chip-dot" style={{background: sub?.color||'#ccc'}}/>
+                          {selectedSub}
+                        </div>
+                      ); })()
+                    : <span style={{color:'var(--text-light)', fontWeight:600, fontSize:14}}>과목을 선택하세요</span>
+                  }
+                  <span style={{fontSize:11, color:'var(--text-light)'}}>{isDropdownOpen?'▲':'▼'}</span>
+                </div>
+
+                {isDropdownOpen && (
+                  <div className="dropdown-list" style={{marginTop:-10, marginBottom:16}}>
+                    {subjects.length === 0
+                      ? <div className="dropdown-option" style={{color:'var(--text-light)'}}>과목을 먼저 등록해주세요</div>
+                      : subjects.map(sub => (
+                          <div key={sub.id} className="dropdown-option"
+                            onClick={() => { setSelectedSub(sub.name); setIsDropdownOpen(false); }}>
+                            <div style={{width:10, height:10, borderRadius:'50%', background: sub.color}}/>
+                            <span style={{fontWeight:700}}>{sub.name}</span>
+                          </div>
+                        ))
+                    }
+                  </div>
+                )}
+
+                <button className={`btn-primary ${isRunning?'btn-stop':''}`}
+                  onClick={startStop}
+                  disabled={!selectedSub && !isRunning}>
+                  {isRunning ? '⏸  정지하기' : time > 0 ? '▶  재개하기' : '▶  학습 시작'}
+                </button>
               </div>
             ) : (
               <div>
-                <div style={{display:'flex', gap:'15px', marginBottom:'20px'}}>
-                  <div style={{flex:1}}><label className="input-label">맞힌 수</label><input type="number" className="input-field" value={correct} onChange={e => setCorrect(e.target.value)} /></div>
-                  <div style={{flex:1}}><label className="input-label">전체 문항</label><input type="number" className="input-field" value={total} onChange={e => setTotal(e.target.value)} /></div>
+                <div style={{textAlign:'center', marginBottom:20, color:'var(--text-mid)', fontSize:14, fontWeight:600}}>
+                  🎉 학습 완료! 총 <strong style={{color:'var(--primary)'}}>{fmtHuman(time)}</strong> 학습했어요
                 </div>
-                <button className="btn-submit" onClick={saveSession}>기록 저장</button>
+                <div style={{display:'flex', gap:12, marginBottom:16}}>
+                  <div style={{flex:1}}>
+                    <label className="input-label">맞힌 수</label>
+                    <input type="number" min="0" className="input-field" style={{marginBottom:0}}
+                      value={correct} onChange={e=>setCorrect(e.target.value)} placeholder="0"/>
+                  </div>
+                  <div style={{flex:1}}>
+                    <label className="input-label">전체 문항</label>
+                    <input type="number" min="0" className="input-field" style={{marginBottom:0}}
+                      value={total} onChange={e=>setTotal(e.target.value)} placeholder="0"/>
+                  </div>
+                </div>
+                {total > 0 && correct >= 0 && (
+                  <div style={{textAlign:'center', marginBottom:16, fontSize:13, color:'var(--text-mid)', fontWeight:600}}>
+                    예상 정답률: <strong style={{color:'var(--primary)', fontSize:16}}>{Math.round((Number(correct)/Number(total))*100)}%</strong>
+                  </div>
+                )}
+                <button className="btn-primary" onClick={saveSession}>💾 기록 저장</button>
+                <button className="btn-ghost" onClick={discardSession}>기록 삭제하고 초기화</button>
               </div>
             )}
           </div>
         )}
 
+        {/* ══════ MANAGE ══════ */}
         {view === 'manage' && (
-          <div>
+          <>
             <div className="card">
-              <h3 style={{marginBottom:'15px', fontWeight:'800'}}>새 과목 등록</h3>
-              <input className="input-field" placeholder="과목 이름" value={newSubName} onChange={(e)=>setNewSubName(e.target.value)} />
-              <div style={{display:'flex', flexWrap:'wrap', gap:'12px', marginBottom:'25px'}}>
-                {COLORS.map(c => <div key={c} onClick={()=>setNewSubColor(c)} style={{width:'34px', height:'34px', borderRadius:'10px', background:c, cursor:'pointer', border: newSubColor===c ? '3px solid #333' : '3px solid transparent'}} />)}
+              <div className="section-title">새 과목 등록</div>
+              <label className="input-label" style={{marginTop:8}}>과목 이름</label>
+              <input className="input-field" placeholder="예: 수학, 영어, 물리..." value={newSubName}
+                onChange={e => setNewSubName(e.target.value)}
+                onKeyDown={e => e.key==='Enter' && newSubName && (setSubjects(p=>[...p,{id:Date.now(),name:newSubName,color:newSubColor}]),setNewSubName(''))}
+              />
+              <label className="input-label">색상 선택</label>
+              <div className="color-swatches">
+                {COLORS.map(c => (
+                  <div key={c} className={`color-swatch ${newSubColor===c?'sel':''}`}
+                    style={{background:c}} onClick={() => setNewSubColor(c)}/>
+                ))}
               </div>
-              <button className="btn-submit" style={{background: newSubColor}} onClick={()=>{if(!newSubName) return; setSubjects([...subjects, {id:Date.now(), name:newSubName, color:newSubColor}]); setNewSubName('');}}>추가하기</button>
+              <button className="btn-primary" style={{background: `linear-gradient(135deg, ${newSubColor}, ${newSubColor}cc)`}}
+                onClick={() => { if(!newSubName.trim()) return; setSubjects(p=>[...p,{id:Date.now(),name:newSubName.trim(),color:newSubColor}]); setNewSubName(''); }}>
+                + 과목 추가
+              </button>
             </div>
-            <div className="subject-grid">
-              {subjects.map(sub => {
-                const stats = getSubStats(sub.name);
-                return (
-                  <div className="subject-item-card" key={sub.id} onClick={() => setSelectedReport(sub)}>
-                    <div className="sub-color-indicator" style={{background: sub.color}}></div>
-                    <div className="sub-card-name" style={{fontWeight:'700'}}>{sub.name}</div>
-                    <div style={{display:'flex', gap:'12px', fontSize:'14px', color:'var(--text-light)'}}>
-                      <span>⏱ {stats.mins}분</span>
-                      <span>📊 {stats.avgScore}%</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+
+            {subjects.length === 0 ? (
+              <div className="empty-state" style={{padding:'40px 20px'}}>
+                <div className="empty-icon">📚</div>
+                아직 과목이 없어요.<br/>위에서 첫 과목을 등록해보세요!
+              </div>
+            ) : (
+              <>
+                <div className="section-title">등록된 과목</div>
+                <div className="sub-grid">
+                  {subjects.map(sub => {
+                    const st = getSubStats(sub.name);
+                    return (
+                      <div key={sub.id} className="sub-card" onClick={() => setSelectedReport(sub)}>
+                        <div style={{height:4, background: sub.color, borderRadius:'4px', marginBottom:12}}/>
+                        <div className="sub-card-name">{sub.name}</div>
+                        <div className="sub-card-stat">⏱ {Math.floor(st.totalSec/60)}분 학습</div>
+                        <div className="sub-card-stat" style={{marginTop:4}}>✍️ {st.count}회 세션</div>
+                        {st.count > 0 && (
+                          <>
+                            <div className="mini-bar" style={{marginTop:10}}>
+                              <div className="mini-bar-fill" style={{width:`${st.avgScore}%`, background: sub.color}}/>
+                            </div>
+                            <div style={{fontSize:10, color:'var(--text-light)', fontWeight:600, marginTop:4}}>
+                              평균 정답률 {st.avgScore}%
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+          </>
         )}
 
-        {selectedReport && (
+      </div>
+
+      {/* ══════ REPORT MODAL ══════ */}
+      {selectedReport && (() => {
+        const st = getSubStats(selectedReport.name);
+        const subSessions = sessions.filter(s => s.subject === selectedReport.name);
+        return (
           <div className="modal-overlay" onClick={() => setSelectedReport(null)}>
-            <div className="report-modal" onClick={e => e.stopPropagation()}>
-              <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'30px'}}>
-                <h2 style={{fontWeight:'800'}}>{selectedReport.name} 리포트</h2>
-                <button onClick={() => setSelectedReport(null)} style={{background:'none', border:'none', fontSize:'28px', color:'#ccc', cursor:'pointer'}}>×</button>
-              </div>
-              <div style={{display:'flex', alignItems:'center', gap:'30px', marginBottom:'40px'}}>
-                <div style={{width:'110px', height:'110px', borderRadius:'50%', background: `conic-gradient(${selectedReport.color} ${getSubStats(selectedReport.name).progress}%, #f0f2f5 0)`, display:'flex', alignItems:'center', justifyContent:'center', position:'relative'}}>
-                  <div style={{background:'white', width:'85px', height:'85px', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', fontWeight:'800', fontSize:'22px', position:'absolute'}}>
-                    {getSubStats(selectedReport.name).progress}%
-                  </div>
-                </div>
+            <div className="modal-sheet" onClick={e => e.stopPropagation()}>
+              {/* Header */}
+              <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:4}}>
                 <div>
-                  <div style={{fontSize:'14px', color:'var(--text-light)', fontWeight:'600'}}>회당 평균 학습</div>
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', color: selectedReport.color }}>
-                    <span style={{ fontSize: '32px', fontWeight: '800' }}>{getSubStats(selectedReport.name).avgMins}</span>
-                    <span style={{ fontSize: '16px', fontWeight: '700' }}>분</span>
-                    <span style={{ fontSize: '32px', fontWeight: '800', marginLeft: '4px' }}>{getSubStats(selectedReport.name).avgSec}</span>
-                    <span style={{ fontSize: '16px', fontWeight: '700' }}>초</span>
+                  <div style={{fontSize:11, fontWeight:700, color:'var(--text-light)', textTransform:'uppercase', letterSpacing:'0.8px', marginBottom:6}}>과목 리포트</div>
+                  <div style={{fontSize:24, fontWeight:900, color: selectedReport.color}}>{selectedReport.name}</div>
+                </div>
+                <button onClick={() => setSelectedReport(null)}
+                  style={{border:'none', background:'#f5f7fa', width:36, height:36, borderRadius:12, cursor:'pointer', fontSize:18, color:'var(--text-light)', display:'flex', alignItems:'center', justifyContent:'center'}}>
+                  ×
+                </button>
+              </div>
+
+              {/* Donut + avg */}
+              <div className="donut-wrap">
+                <DonutChart pct={st.avgScore} color={selectedReport.color} size={110}/>
+                <div style={{flex:1}}>
+                  <div style={{fontSize:11, fontWeight:700, color:'var(--text-light)', marginBottom:6}}>회당 평균 학습</div>
+                  <div style={{fontSize:34, fontWeight:900, fontFamily:'Nunito,sans-serif', color: selectedReport.color, lineHeight:1}}>
+                    {fmtHuman(st.avgSec)}
                   </div>
+                  <div style={{fontSize:12, color:'var(--text-light)', fontWeight:600, marginTop:8}}>{st.count}회 세션 완료</div>
                 </div>
               </div>
-              <div style={{marginTop:'30px', paddingTop:'30px', borderTop:'1px solid var(--border)'}}>
-                <div style={{display:'flex', justifyContent:'space-between', marginBottom:'12px', fontWeight:'700'}}>
-                  <span>평균 정답률</span>
-                  <span style={{color: selectedReport.color}}>{getSubStats(selectedReport.name).avgScore}%</span>
+
+              {/* Stats */}
+              <div style={{background:'#f8fafb', borderRadius:20, padding:'4px 18px', marginBottom:20}}>
+                <div className="stat-row">
+                  <span className="stat-key">총 학습 시간</span>
+                  <span className="stat-val" style={{color: selectedReport.color}}>{fmtHuman(st.totalSec)}</span>
                 </div>
-                <div style={{height:'12px', background:'#f0f2f5', borderRadius:'10px', overflow:'hidden'}}>
-                  <div style={{width: `${getSubStats(selectedReport.name).avgScore}%`, background: selectedReport.color, height:'100%'}}></div>
+                <div className="stat-row">
+                  <span className="stat-key">평균 정답률</span>
+                  <span className="stat-val" style={{color: selectedReport.color}}>{st.avgScore}%</span>
+                </div>
+                <div className="stat-row">
+                  <span className="stat-key">최근 세션</span>
+                  <span className="stat-val" style={{fontSize:14}}>
+                    {subSessions.length > 0 ? subSessions[0].date : '—'}
+                  </span>
                 </div>
               </div>
-              <button className="btn-submit" style={{marginTop:'40px', background:'#f8f9fa', color: '#adb5bd'}} 
-                onClick={() => {if(confirm('과목을 삭제하시겠습니까?')) { setSubjects(subjects.filter(s => s.id !== selectedReport.id)); setSessions(sessions.filter(s => s.subject !== selectedReport.name)); setSelectedReport(null);}}}>
+
+              {/* Progress bar */}
+              <div style={{marginBottom:24}}>
+                <div style={{display:'flex', justifyContent:'space-between', fontSize:12, fontWeight:700, color:'var(--text-light)', marginBottom:8}}>
+                  <span>정답률 분포</span><span>{st.avgScore}%</span>
+                </div>
+                <div className="mini-bar" style={{height:10}}>
+                  <div className="mini-bar-fill" style={{width:`${st.avgScore}%`, background: selectedReport.color}}/>
+                </div>
+              </div>
+
+              {/* Delete button */}
+              <button className="btn-ghost" style={{marginTop:0}}
+                onClick={() => {
+                  if(confirm(`"${selectedReport.name}" 과목과 모든 기록을 삭제할까요?`)) {
+                    setSubjects(p => p.filter(s => s.id !== selectedReport.id));
+                    setSessions(p => p.filter(s => s.subject !== selectedReport.name));
+                    setSelectedReport(null);
+                  }
+                }}>
                 과목 삭제
               </button>
             </div>
           </div>
-        )}
-      </div>
+        );
+      })()}
     </div>
   );
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
 </body>
 </html>
