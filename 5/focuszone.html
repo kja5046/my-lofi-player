@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FocusOn - Tablet Optimized</title>
+<title>FocusOn</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
@@ -34,7 +34,7 @@
     min-height: 100vh;
   }
 
-  /* ─── LAYOUT ─── */
+  /* ─── NAV ─── */
   .nav {
     background: rgba(255,255,255,0.92);
     backdrop-filter: blur(16px);
@@ -61,33 +61,38 @@
   }
   .nav-tab.active { color: var(--primary-dark); background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
 
-  .container { max-width: 1100px; margin: 0 auto; padding: 24px 20px 48px; }
+  /* ─── LAYOUT ─── */
+  .container { max-width: 620px; margin: 0 auto; padding: 24px 20px 48px; }
 
-  /* Grid System for Tablet Landscape */
-  .main-grid { display: flex; flex-direction: column; gap: 20px; }
-
-  @media (min-width: 850px) {
-    .main-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; align-items: start; }
-    .side-column { position: sticky; top: calc(var(--nav-h) + 24px); }
-  }
-
-  /* ─── CARDS & COMPONENTS ─── */
+  /* ─── CARDS ─── */
   .card {
     background: var(--card); border-radius: 24px;
     padding: 24px; box-shadow: var(--shadow-card);
-    border: 1px solid var(--border); margin-bottom: 20px;
+    border: 1px solid var(--border); margin-bottom: 16px;
+    transition: box-shadow 0.2s;
   }
 
+  /* ─── HOME: HERO STRIP ─── */
   .hero-strip {
     background: linear-gradient(135deg, #2dc08a 0%, #3ecf8e 50%, #52e3a3 100%);
     border-radius: 28px; padding: 28px 28px 22px;
-    color: white; margin-bottom: 20px;
+    color: white; margin-bottom: 16px;
     position: relative; overflow: hidden;
     box-shadow: 0 8px 32px rgba(62,207,142,0.35);
   }
   .hero-strip::before {
-    content: ''; position: absolute; top: -40px; right: -40px;
-    width: 180px; height: 180px; background: rgba(255,255,255,0.12); border-radius: 50%;
+    content: '';
+    position: absolute; top: -40px; right: -40px;
+    width: 180px; height: 180px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 50%;
+  }
+  .hero-strip::after {
+    content: '';
+    position: absolute; bottom: -60px; right: 60px;
+    width: 120px; height: 120px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 50%;
   }
   .hero-greeting { font-size: 13px; font-weight: 600; opacity: 0.85; margin-bottom: 6px; }
   .hero-title { font-family: 'Nunito', sans-serif; font-size: 26px; font-weight: 900; line-height: 1.2; margin-bottom: 18px; }
@@ -95,6 +100,7 @@
   .hero-stat-val { font-family: 'Nunito', sans-serif; font-size: 28px; font-weight: 900; line-height: 1; }
   .hero-stat-lbl { font-size: 11px; font-weight: 600; opacity: 0.75; margin-top: 4px; }
 
+  /* ─── SECTION TITLE ─── */
   .section-title {
     font-size: 13px; font-weight: 700; color: var(--text-light);
     text-transform: uppercase; letter-spacing: 0.8px;
@@ -102,127 +108,359 @@
   }
 
   /* ─── WEEK CHART ─── */
-  .week-chart-wrap { display: flex; align-items: flex-end; gap: 6px; height: 100px; }
+  .week-chart-wrap { display: flex; align-items: flex-end; gap: 6px; height: 80px; }
   .week-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
-  .week-bar-bg { width: 100%; border-radius: 8px; background: #f0f3f8; overflow: hidden; position: relative; }
-  .week-bar-fill { width: 100%; border-radius: 8px; transition: height 0.6s cubic-bezier(.34,1.56,.64,1); position: absolute; bottom: 0; }
+  .week-bar-bg { width: 100%; border-radius: 8px; background: #f0f3f8; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; }
+  .week-bar-fill { width: 100%; border-radius: 8px; transition: height 0.6s cubic-bezier(.34,1.56,.64,1); }
   .week-bar-fill.today { background: linear-gradient(180deg, #52e3a3, #27b577); }
   .week-bar-fill.past { background: linear-gradient(180deg, #bde9d8, #9dd9c4); }
   .week-label { font-size: 10px; font-weight: 700; color: var(--text-light); }
   .week-label.today { color: var(--primary-dark); }
 
-  /* ─── QUICK STATS ─── */
-  .quick-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-  @media (min-width: 850px) { .quick-stats { grid-template-columns: 1fr 1fr; } .qs-card:last-child { grid-column: span 2; } }
+  /* ─── QUICK STATS ROW ─── */
+  .quick-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 16px; }
   .qs-card {
     background: white; border-radius: 20px; padding: 18px 14px;
     border: 1px solid var(--border); box-shadow: var(--shadow-card);
     display: flex; flex-direction: column; align-items: center; gap: 6px;
   }
   .qs-icon { font-size: 22px; }
-  .qs-val { font-family: 'Nunito', sans-serif; font-size: 20px; font-weight: 900; color: var(--text); }
+  .qs-val { font-family: 'Nunito', sans-serif; font-size: 20px; font-weight: 900; color: var(--text); line-height: 1; }
   .qs-lbl { font-size: 10px; font-weight: 600; color: var(--text-light); text-align: center; }
 
-  /* ─── SUBJECTS ─── */
-  .sub-pill-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  /* ─── SUBJECT STREAKS ─── */
+  .sub-pill-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
   .sub-pill {
     display: flex; align-items: center; gap: 7px;
     background: white; border: 1px solid var(--border);
-    border-radius: 50px; padding: 8px 14px;
+    border-radius: 50px; padding: 7px 14px 7px 10px;
     font-size: 13px; font-weight: 700; cursor: pointer;
     box-shadow: var(--shadow-card); transition: all 0.2s;
   }
-  .sub-pill-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .sub-pill:hover { box-shadow: var(--shadow-hover); transform: translateY(-1px); }
+  .sub-pill-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 
   /* ─── RECORD TABLE ─── */
   .record-table { width: 100%; border-collapse: collapse; }
   .record-table th {
-    font-size: 10px; font-weight: 700; color: var(--text-light);
-    text-transform: uppercase; padding: 0 8px 12px; text-align: center; border-bottom: 1px solid var(--border);
+    font-size: 11px; font-weight: 700; color: var(--text-light);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    padding: 0 8px 12px; text-align: center; border-bottom: 1px solid var(--border);
   }
-  .record-table td { padding: 14px 8px; border-bottom: 1px solid #f5f7fa; text-align: center; font-size: 13px; }
+  .record-table th:first-child { text-align: left; }
+  .record-table td {
+    padding: 14px 8px; border-bottom: 1px solid #f5f7fa;
+    text-align: center; vertical-align: middle; font-size: 14px;
+  }
+  .record-table td:first-child { text-align: left; }
   .record-table tr:last-child td { border-bottom: none; }
   .sub-chip {
     display: inline-flex; align-items: center; gap: 5px;
-    padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700;
+    padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700;
   }
   .sub-chip-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .score-pill {
+    display: inline-block; padding: 3px 10px; border-radius: 30px;
+    font-size: 13px; font-weight: 800;
+  }
+  .del-btn {
+    border: none; background: none; color: var(--text-light); font-size: 16px;
+    cursor: pointer; line-height: 1; padding: 4px; border-radius: 6px; transition: all 0.15s;
+  }
+  .del-btn:hover { color: var(--danger); background: #fff0f3; }
 
   /* ─── TIMER ─── */
-  .timer-wrap { text-align: center; padding: 30px 0; }
+  .timer-wrap { text-align: center; padding: 36px 20px 28px; }
   .timer-ring {
-    width: 220px; height: 220px; margin: 0 auto 28px;
+    width: 200px; height: 200px; margin: 0 auto 28px;
     border-radius: 50%; position: relative;
     display: flex; align-items: center; justify-content: center;
     background: conic-gradient(var(--primary) 0%, #f0f3f8 0%);
     box-shadow: 0 0 0 3px white, 0 0 0 5px var(--border);
+    transition: background 0.3s;
   }
   .timer-ring-inner {
-    position: absolute; width: 180px; height: 180px;
+    position: absolute; width: 164px; height: 164px;
     background: white; border-radius: 50%;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
   }
-  .timer-num { font-family: 'Nunito', sans-serif; font-size: 42px; font-weight: 900; color: var(--text); }
+  .timer-num { font-family: 'Nunito', sans-serif; font-size: 36px; font-weight: 900; color: var(--text); letter-spacing: -1px; }
+  .timer-sub { font-size: 11px; font-weight: 600; color: var(--text-light); margin-top: 4px; }
+  .timer-state { font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: 0.5px; margin-top: 2px; }
 
-  /* ─── INPUTS & BUTTONS ─── */
+  /* ─── INPUTS ─── */
   .input-label { display: block; font-size: 12px; font-weight: 700; color: var(--text-light); margin-bottom: 7px; }
   .input-field {
     width: 100%; padding: 15px 18px; border-radius: 16px;
     border: 1.5px solid var(--border); background: #fafbfc;
-    font-family: inherit; font-size: 15px; font-weight: 600; outline: none; margin-bottom: 16px;
+    font-family: inherit; font-size: 15px; font-weight: 600; outline: none; transition: border 0.2s;
+    color: var(--text); margin-bottom: 16px;
   }
-  .btn-primary {
-    width: 100%; padding: 18px; border-radius: 18px; border: none;
-    background: linear-gradient(135deg, #3ecf8e, #27b577);
-    color: white; font-weight: 800; font-size: 16px;
-    cursor: pointer; box-shadow: 0 4px 16px rgba(62,207,142,0.4);
-  }
-  .btn-stop { background: linear-gradient(135deg, #ff6b6b, #ee5a24); box-shadow: 0 4px 16px rgba(255,107,107,0.35); }
-  .btn-ghost {
-    width: 100%; padding: 16px; border-radius: 16px;
-    border: 1.5px solid var(--border); background: white;
-    color: var(--text-light); font-weight: 700; font-size: 14px; cursor: pointer; margin-top: 10px;
-  }
-
-  /* ─── QUIZ CARD ─── */
-  .quiz-card { background: white; border-radius: 24px; padding: 22px; margin-bottom: 20px; border: 1px solid var(--border); box-shadow: var(--shadow-card); }
-  .quiz-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-  .quiz-word { font-family: 'Nunito', sans-serif; font-size: 28px; font-weight: 900; color: var(--text); text-align: center; margin-bottom: 18px; }
-  .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .quiz-option {
-    background: var(--bg); border: 2px solid var(--border); border-radius: 14px;
-    padding: 12px; cursor: pointer; font-size: 12px; font-weight: 600; text-align: center; transition: all 0.15s;
-  }
-  .quiz-option.correct { border-color: #3ecf8e; background: #edfaf4; color: #1a7a53; }
-  .quiz-option.wrong { border-color: var(--danger); background: #fff0f3; color: var(--danger); }
+  .input-field:focus { border-color: var(--primary); background: white; }
+  input[type="date"].input-field { cursor: pointer; }
 
   /* ─── DROPDOWN ─── */
   .dropdown-trigger {
     width: 100%; padding: 15px 18px; border-radius: 16px;
     border: 1.5px solid var(--border); background: #fafbfc;
     cursor: pointer; display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 16px; font-weight: 600;
+    margin-bottom: 16px; transition: border 0.2s; font-weight: 600;
   }
+  .dropdown-trigger.open { border-color: var(--primary); background: white; }
+  .dropdown-trigger:hover { border-color: #c5ccd8; }
   .dropdown-list {
-    background: white; border-radius: 16px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);
-    border: 1px solid var(--border); z-index: 20; overflow: hidden; position: absolute; width: 100%; margin-top: -10px;
+    background: white; border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+    border: 1px solid var(--border); z-index: 20; overflow: hidden;
+    animation: fadeIn 0.15s ease;
   }
-  .dropdown-option { padding: 13px 18px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 700; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+  .dropdown-option {
+    padding: 13px 18px; cursor: pointer; display: flex; align-items: center; gap: 10px;
+    font-size: 14px; font-weight: 700; transition: background 0.1s;
+  }
+  .dropdown-option:hover { background: #f8fafb; }
+
+  /* ─── BUTTONS ─── */
+  .btn-primary {
+    width: 100%; padding: 18px; border-radius: 18px; border: none;
+    background: linear-gradient(135deg, #3ecf8e, #27b577);
+    color: white; font-weight: 800; font-size: 16px;
+    cursor: pointer; transition: all 0.2s; font-family: inherit;
+    box-shadow: 0 4px 16px rgba(62,207,142,0.4);
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(62,207,142,0.5); }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-stop {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    box-shadow: 0 4px 16px rgba(255,107,107,0.35);
+  }
+  .btn-stop:hover { box-shadow: 0 8px 24px rgba(255,107,107,0.45); }
+  .btn-ghost {
+    width: 100%; padding: 16px; border-radius: 16px;
+    border: 1.5px solid var(--border); background: white;
+    color: var(--text-light); font-weight: 700; font-size: 14px;
+    cursor: pointer; transition: all 0.2s; font-family: inherit; margin-top: 10px;
+  }
+  .btn-ghost:hover { color: var(--danger); border-color: var(--danger); background: #fff5f7; }
+
+  /* ─── MANAGE ─── */
+  .color-swatches { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+  .color-swatch {
+    width: 32px; height: 32px; border-radius: 9px; cursor: pointer;
+    transition: all 0.15s; border: 3px solid transparent;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  }
+  .color-swatch.sel { border-color: var(--text); transform: scale(1.15); }
+  .sub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .sub-card {
+    background: white; border-radius: 22px; padding: 20px 18px;
+    border: 1px solid var(--border); cursor: pointer;
+    transition: all 0.2s; box-shadow: var(--shadow-card);
+    position: relative; overflow: hidden;
+  }
+  .sub-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  }
+  .sub-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+  .sub-card-name { font-weight: 800; font-size: 15px; margin-bottom: 10px; margin-top: 8px; }
+  .sub-card-stat { font-size: 12px; color: var(--text-mid); font-weight: 600; display: flex; align-items: center; gap: 4px; }
 
   /* ─── MODAL ─── */
   .modal-overlay {
     position: fixed; inset: 0; background: rgba(15,20,30,0.5);
-    backdrop-filter: blur(8px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px;
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    z-index: 1000; display: flex; align-items: flex-end; justify-content: center;
+    padding: 20px;
+    animation: overlayIn 0.2s ease;
   }
+  @keyframes overlayIn { from { opacity:0; } to { opacity:1; } }
   .modal-sheet {
-    background: white; border-radius: 32px; width: 100%; max-width: 480px; padding: 32px; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    background: white; border-radius: 32px 32px 24px 24px;
+    width: 100%; max-width: 480px; padding: 32px 28px 28px;
+    animation: sheetUp 0.3s cubic-bezier(.34,1.56,.64,1);
+    box-shadow: 0 -4px 60px rgba(0,0,0,0.2);
+    max-height: 90vh; overflow-y: auto;
+  }
+  @keyframes sheetUp { from { transform:translateY(40px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+
+  /* ─── DONUT CHART ─── */
+  .donut-wrap {
+    display: flex; align-items: center; gap: 24px; margin: 20px 0;
+  }
+  .donut-svg { flex-shrink: 0; }
+  .stat-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .stat-row:last-child { border-bottom: none; }
+  .stat-key { font-size: 13px; color: var(--text-mid); font-weight: 600; }
+  .stat-val { font-size: 16px; font-weight: 800; }
+
+  /* ─── EMPTY ─── */
+  .empty-state { padding: 40px 20px; text-align: center; color: var(--text-light); font-weight: 600; font-size: 14px; }
+  .empty-icon { font-size: 36px; margin-bottom: 10px; }
+
+  /* ─── MINI PROGRESS BAR ─── */
+  .mini-bar { height: 6px; border-radius: 10px; background: #f0f3f8; overflow: hidden; margin-top: 8px; }
+  .mini-bar-fill { height: 100%; border-radius: 10px; transition: width 0.6s ease; }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+  .pulse { animation: pulse 1.5s infinite; }
+
+  /* ══════════════════════════════════════════
+     TABLET DASHBOARD LAYOUT (2560×1600 & ≥1024px)
+  ══════════════════════════════════════════ */
+  @media (min-width: 1024px) {
+    :root { --nav-h: 72px; }
+
+    body { background: #edf0f5; }
+
+    /* NAV */
+    .nav {
+      padding: 0 48px;
+      height: var(--nav-h);
+    }
+    .nav-logo { font-size: 24px; }
+    .nav-tabs { gap: 6px; padding: 5px; border-radius: 18px; }
+    .nav-tab { font-size: 15px; padding: 10px 24px; border-radius: 13px; }
+
+    /* CONTAINER → full-width dashboard wrapper */
+    .container {
+      max-width: none;
+      width: 100%;
+      padding: 32px 48px 64px;
+    }
+
+    /* ── HOME: 2-column dashboard grid ── */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    .dashboard-col { display: flex; flex-direction: column; gap: 20px; }
+
+    /* Hero strip — spans full width when inside left col */
+    .hero-strip {
+      border-radius: 32px;
+      padding: 36px 36px 28px;
+    }
+    .hero-title { font-size: 32px; margin-bottom: 24px; }
+    .hero-stat-val { font-size: 34px; }
+
+    /* Quick stats — 3 cols inside card on tablet */
+    .quick-stats { gap: 14px; }
+    .qs-card { padding: 22px 18px; border-radius: 22px; }
+    .qs-val { font-size: 26px; }
+    .qs-lbl { font-size: 12px; }
+    .qs-icon { font-size: 28px; }
+
+    /* Weekly chart card — taller bars */
+    .week-chart-wrap { height: 120px; gap: 10px; }
+
+    /* Cards */
+    .card { border-radius: 28px; padding: 28px; margin-bottom: 0; }
+
+    /* Record table font */
+    .record-table td { font-size: 15px; padding: 16px 10px; }
+    .record-table th { font-size: 12px; padding: 0 10px 14px; }
+
+    /* Subject pills */
+    .sub-pill { padding: 9px 18px 9px 13px; font-size: 14px; }
+    .sub-pill-dot { width: 12px; height: 12px; }
+
+    /* TIMER view — centered wide card */
+    .timer-card-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .timer-ring { width: 260px; height: 260px; }
+    .timer-ring-inner { width: 216px; height: 216px; }
+    .timer-num { font-size: 48px; }
+    .timer-wrap { padding: 48px 20px 36px; }
+
+    /* MANAGE view — 2-col layout */
+    .manage-grid {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    .sub-grid { grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    .sub-card { padding: 24px 20px; border-radius: 26px; }
+    .sub-card-name { font-size: 17px; }
+
+    /* Modal — centered, not bottom sheet */
+    .modal-overlay {
+      align-items: center;
+    }
+    .modal-sheet {
+      border-radius: 32px;
+      max-width: 560px;
+      padding: 40px 36px 36px;
+    }
+
+    /* Section titles */
+    .section-title { font-size: 14px; margin-bottom: 16px; }
+
+    /* Inputs */
+    .input-field { padding: 18px 20px; font-size: 16px; border-radius: 18px; }
+    .input-label { font-size: 13px; margin-bottom: 9px; }
+    .btn-primary { padding: 20px; font-size: 17px; border-radius: 20px; }
+    .btn-ghost { padding: 18px; font-size: 15px; border-radius: 18px; }
+
+    /* Quiz card */
+    .quiz-card { border-radius: 28px; padding: 28px 28px 22px; margin-bottom: 0; }
+    .quiz-word { font-size: 36px; margin-bottom: 22px; }
+    .quiz-option { font-size: 14px; min-height: 58px; border-radius: 16px; padding: 14px 12px; }
+    .quiz-result { font-size: 15px; margin-top: 14px; height: 24px; }
   }
 
-  /* ─── UTILS ─── */
-  .pulse { animation: pulse 1.5s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
-  .sub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .sub-card { background: white; border-radius: 22px; padding: 20px; border: 1px solid var(--border); box-shadow: var(--shadow-card); cursor: pointer; }
+
+  /* ─── MOBILE DEFAULTS for dashboard containers ─── */
+  .dashboard-grid { display: block; }
+  .dashboard-col > * { margin-bottom: 16px; }
+  .manage-grid { display: block; }
+  .manage-grid > div > .card { margin-bottom: 16px; }
+
+  /* ─── QUIZ CARD ─── */
+  .quiz-card {
+    background: white;
+    border-radius: 24px;
+    padding: 22px 22px 18px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-card);
+  }
+  .quiz-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .quiz-label { font-size: 11px; font-weight: 700; color: var(--primary-dark); text-transform: uppercase; letter-spacing: 0.8px; }
+  .quiz-streak { font-size: 12px; font-weight: 700; color: var(--text-mid); }
+  .quiz-word { font-family: 'Nunito', sans-serif; font-size: 28px; font-weight: 900; color: var(--text); text-align: center; margin-bottom: 18px; letter-spacing: -0.5px; }
+  .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .quiz-option {
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 11px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    text-align: center;
+    transition: all 0.15s;
+    line-height: 1.35;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .quiz-option:hover:not(.disabled) { border-color: var(--primary); background: var(--primary-soft); color: var(--primary-dark); }
+  .quiz-option.correct { border-color: #3ecf8e; background: #edfaf4; color: #1a7a53; }
+  .quiz-option.wrong { border-color: var(--danger); background: #fff0f3; color: var(--danger); }
+  .quiz-option.reveal { border-color: #3ecf8e; background: #edfaf4; color: #1a7a53; }
+  .quiz-option.disabled { cursor: default; }
+  .quiz-result { text-align: center; margin-top: 12px; font-size: 13px; font-weight: 700; height: 20px; }
+  .quiz-result.ok { color: var(--primary-dark); }
+  .quiz-result.fail { color: var(--danger); }
 </style>
 </head>
 <body>
@@ -232,7 +470,7 @@ const { useState, useEffect, useRef, useMemo } = React;
 
 const COLORS = ["#3ecf8e","#4a90e2","#ff6b6b","#f6b93b","#a29bfe","#fd79a8","#00cec9","#e17055"];
 const DAYS_KO = ['일','월','화','수','목','금','토'];
-const VOCAB_WORDS = [{en:"exhume", ko:"발굴하다"},{en:"vague", ko:"모호한"},{en:"ingenious", ko:"기발한"},{en:"susceptible", ko:"민감한"},{en:"obstinate", ko:"고집 센"},{en:"mediocre", ko:"평범한"},{en:"tangible", ko:"유형의"},{en:"fragrant", ko:"향기로운"},{en:"remnant", ko:"잔재"},{en:"exacerbate", ko:"악화시키다"}];
+const VOCAB_WORDS = [{en:"exhume", ko:"발굴하다"},{en:"vague", ko:"모호한, 애매한, 희미한"},{en:"vanish", ko:"사라지다"},{en:"ingenious", ko:"기발한, 독창적인"},{en:"genocide", ko:"대량 살상, 집단 학살"},{en:"homicide", ko:"살인"},{en:"respire", ko:"호흡하다, 숨 쉬다"},{en:"conspire", ko:"공모하다, 음모를 꾸미다"},{en:"expire", ko:"만료되다"},{en:"allude", ko:"암시하다, 언급하다"},{en:"conceive", ko:"생각해 내다, 상상하다, 임신하다"},{en:"susceptible", ko:"영향을 받기 쉬운, 민감한"},{en:"abstain", ko:"삼가다, 자제하다"},{en:"proficient", ko:"능숙한, 숙련된"},{en:"compel", ko:"강요하다, 억지로 ~하게 하다"},{en:"manual", ko:"손의, 수동의, 설명서"},{en:"impress", ko:"깊은 인상을 주다, 감동시키다"},{en:"depress", ko:"낙담시키다, 우울하게 하다"},{en:"oppress", ko:"탄압하다, 괴롭히다, 우울하게 만들다"},{en:"revenue", ko:"세입, 수입"},{en:"conventional", ko:"전통적인, 관습적인, 전형적인"},{en:"precede", ko:"~에 선행하다, 앞서다, 우선하다"},{en:"concede", ko:"인정하다, 양보하다"},{en:"regress", ko:"퇴보하다, 퇴행하다"},{en:"transmit", ko:"전송하다, 전달하다, 전도하다"},{en:"intermittent", ko:"간헐적인, 간간이 일어나는"},{en:"deport", ko:"강제 이송하다, 추방하다"},{en:"propose", ko:"제안하다, 제의하다"},{en:"oppose", ko:"반대하다, 대항하다"},{en:"infer", ko:"추론하다, 추측하다"},{en:"defer", ko:"미루다, 연기하다, 경의를 표하다"},{en:"subsidize", ko:"보조금을 주다"},{en:"obstinate", ko:"고집 센, 완강한"},{en:"state", ko:"상태, 국가, 주, 말하다, 국가의"},{en:"status", ko:"지위, 신분, 상황"},{en:"stature", ko:"지명도, 위상, 키(신장)"},{en:"obstruct", ko:"방해하다, 막다"},{en:"instrument", ko:"도구, 기구, 악기"},{en:"renovate", ko:"개조하다, 보수하다"},{en:"mediate", ko:"중재하다, 조정하다"},{en:"meditate", ko:"명상하다, 숙고하다, 계획하다"},{en:"mediocre", ko:"보통의, 평범한, 그저 그런"},{en:"midst", ko:"중앙, 한가운데"},{en:"simultaneous", ko:"동시의, 동시에 일어나는"},{en:"intact", ko:"온전한, 손상되지 않은, 완전한"},{en:"tangible", ko:"실재하는, 유형의, 확실한"},{en:"contaminate", ko:"오염시키다, 더럽히다"},{en:"converse", ko:"정반대(의), 대화하다"},{en:"diverge", ko:"나뉘다, 갈라지다, 벗어나다, 일탈하다"},{en:"intersect", ko:"가로지르다, 교차하다"},{en:"fragment", ko:"조각, 파편, 부서지다, 해체되다"},{en:"fraction", ko:"분수, 비율, 소량, 단편"},{en:"corrupt", ko:"부패한, 타락한, 타락시키다"},{en:"sentiment", ko:"감정, 정서, 감상"},{en:"resent", ko:"분개하다, 불쾌하게 여기다"},{en:"assent", ko:"동의(하다), 찬성, 승낙"},{en:"consent", ko:"동의(하다), 허락, 합의"},{en:"dissent", ko:"반대하다, 반대"},{en:"devour", ko:"게걸스레 먹다, 탐식하다"},{en:"omnivorous", ko:"잡식성의, 아무것이나 다 즐기는"},{en:"voracious", ko:"먹성을 가진, 탐욕스러운"},{en:"implication", ko:"연관, 함축, 암시, 영향, 결과"},{en:"subtract", ko:"빼다, 공제하다"},{en:"persecute", ko:"박해하다; 귀찮게 굴다"},{en:"pursue", ko:"추구하다, 실행하다, 추적하다"},{en:"preoccupy", ko:"마음을 사로잡다, 몰두시키다, 선점하다"},{en:"pretext", ko:"사전 시험"},{en:"persevere", ko:"인내하다, 견디다, 꾸준히 노력하다"},{en:"comrade", ko:"동료, 동지, 친구"},{en:"comprise", ko:"구성하다, 포함하다"},{en:"confuse", ko:"혼동하다, 혼란스럽게 하다"},{en:"disregard", ko:"무시(하다), 묵살(하다)"},{en:"disparity", ko:"차이, 불균형"},{en:"counterfeit", ko:"위조하다, 위조의, 가짜의"},{en:"reproduce", ko:"재현하다, 복제하다, 번식하다"},{en:"regain", ko:"되찾다, 회복하다"},{en:"replace", ko:"대치하다, 대체하다"},{en:"reassure", ko:"안심시키다"},{en:"reimburse", ko:"변상하다, 갚다"},{en:"resurrection", ko:"부활, 재생"},{en:"anarchy", ko:"무정부 상태, 혼란"},{en:"adhere", ko:"들러붙다, 준수하다"},{en:"accord", ko:"일치하다, 부여하다, 합의"},{en:"acknowledge", ko:"인정하다, 시인하다, 감사를 표하다"},{en:"affiliate", ko:"가입시키다, 제휴를 맺다, 계열사"},{en:"appease", ko:"달래다"},{en:"assort", ko:"분류하다, 끼워 맞추다"},{en:"uneasy", ko:"불편한, 불안한, 불안정한"},{en:"uneven", ko:"울퉁불퉁한, 공정하지 않은"},{en:"misuse", ko:"남용(하다), 오용(하다)"},{en:"misplace", ko:"잘못 두다, 제 위치를 잃다"},{en:"entitle", ko:"자격을 주다, 제목을 붙이다"},{en:"entice", ko:"유혹하다"},{en:"prospect", ko:"전망, 가능성, 예상, 조망"},{en:"incessant", ko:"끊임없는, 쉴 새 없는"},{en:"inarticulate", ko:"불분명한"},{en:"intimidate", ko:"위협하다, 겁주다"},{en:"inmate", ko:"수감자, (정신병원) 입원 환자"},{en:"exorbitant", ko:"과도한, 터무니없는"},{en:"intersection", ko:"교차로"},{en:"intertwine", ko:"뒤엉키다, 밀접하게 관련되다"},{en:"preposterous", ko:"터무니없는, 앞뒤가 안 맞는"},{en:"outrage", ko:"격분, 분노, 만행; 격분하게 만들다"},{en:"deceased", ko:"사망한; 고인"},{en:"debase", ko:"(가치·품질 등을) 저하시키다, 떨어뜨리다"},{en:"depict", ko:"그리다, 묘사하다"},{en:"decay", ko:"부패하다, 쇠퇴하다; 부패, 쇠퇴"},{en:"defunct", ko:"죽은, 사용되지 않는, 효력을 잃은"},{en:"default", ko:"태만, 채무 불이행; 채무를 이행하지 않다"},{en:"superstition", ko:"미신"},{en:"surplus", ko:"잉여, 과잉; 잉여의, 과잉의"},{en:"undermine", ko:"손상시키다, 약화시키다"},{en:"suffocate", ko:"질식하게 하다"},{en:"overtake", ko:"따라잡다, 추월하다, 압도하다"},{en:"override", ko:"무효로 하다, 무시하다"},{en:"overcome", ko:"극복하다, 이기다"},{en:"dubious", ko:"의심하는, 수상쩍은"},{en:"terrify", ko:"겁나게 하다, 무섭게 하다"},{en:"marvelous", ko:"기막힌, 놀라운, 훌륭한"},{en:"righteous", ko:"정의로운, 공정한, 도덕적인"},{en:"prudent", ko:"신중한, 사려 깊은"},{en:"statutory", ko:"법정의"},{en:"mannish", ko:"남자 같은 (부정적 의미)"},{en:"sensation", ko:"감각, 느낌, 센세이션, 선풍"},{en:"combustion", ko:"연소, 산화"},{en:"nuisance", ko:"성가신 존재, 골칫거리"},{en:"allot", ko:"할당(배분)하다"},{en:"resign", ko:"사임하다, 포기하다"},{en:"inaugurate", ko:"취임시키다, 시작하다"},{en:"connote", ko:"함축하다, 암시하다"},{en:"acquaint", ko:"알리다, 익히다"},{en:"notify", ko:"알리다, 통지하다"},{en:"symmetry", ko:"대칭, 균형"},{en:"mortgage", ko:"저당, 담보; 저당 잡히다"},{en:"obscure", ko:"불명확한, 잘 알려지지 않은; 모호하게 하다"},{en:"copious", ko:"많은, 풍부한"},{en:"adequate", ko:"충분한, 적절한"},{en:"luxuriant", ko:"풍부한, 무성한, 기름진"},{en:"immense", ko:"엄청난, 거대한, 어마어마한"},{en:"tremendous", ko:"엄청난, 거대한, 무시무시한"},{en:"furious", ko:"분노한, 맹렬한"},{en:"rage", ko:"분노, 격분; 분노하다, 휩쓸다"},{en:"drastic", ko:"격렬한, 급격한"},{en:"exterminate", ko:"몰살시키다, 전멸시키다"},{en:"abolish", ko:"폐지하다, 없애다"},{en:"infuse", ko:"주입하다, 불어넣다"},{en:"transplant", ko:"이식하다, 옮겨 심다; 이식"},{en:"ascertain", ko:"확인하다"},{en:"identical", ko:"동일한, 똑같은"},{en:"consonant", ko:"일치하는; 자음"},{en:"considerable", ko:"상당한, 중요한"},{en:"cardinal", ko:"가장 중요한; 추기경"},{en:"diligent", ko:"근면한, 성실한"},{en:"laborious", ko:"힘든, 고된, 부지런한"},{en:"sincere", ko:"진실한, 성실한"},{en:"candid", ko:"솔직한, 노골적인"},{en:"elegant", ko:"우아한, 품격 있는"},{en:"blemish", ko:"티, 흠; 흠을 내다"},{en:"sparse", ko:"드문, 희박한"},{en:"scanty", ko:"부족한, 빈약한"},{en:"meager", ko:"부족한, 빈약한"},{en:"corporeal", ko:"신체의, 육체의"},{en:"metabolic", ko:"신진대사의"},{en:"particle", ko:"미립자, 극소량"},{en:"flesh", ko:"살, 고기, 과육"},{en:"knee", ko:"무릎"},{en:"acute", ko:"예리한, 급성의, 극심한"},{en:"swift", ko:"신속한, 재빠른"},{en:"nimble", ko:"민첩한, 재빠른, 영리한"},{en:"diffident", ko:"조심스러운, 자신감 없는"},{en:"ascend", ko:"올라가다, 오르다"},{en:"exaggerate", ko:"과장하다"},{en:"proliferate", ko:"증식하다, 급증하다"},{en:"prosper", ko:"번창하다, 번성하다"},{en:"flourish", ko:"번창하다, 번성하다"},{en:"omnipotent", ko:"전능한"},{en:"dissuade", ko:"단념시키다"},{en:"plunge", ko:"뛰어들다, 급락하다; 급락"},{en:"stagger", ko:"비틀거리다; 깜짝 놀라게 하다"},{en:"detest", ko:"혐오하다, 몹시 싫어하다"},{en:"abhor", ko:"혐오하다, 몹시 싫어하다"},{en:"intimate", ko:"친밀한, 깊은"},{en:"radioactive", ko:"방사능의, 방사성의"},{en:"liquidate", ko:"청산하다, 해산하다"},{en:"oblivion", ko:"망각, 잊힌 상태"},{en:"stain", ko:"얼룩지게 하다; 얼룩, 오염, 오명"},{en:"rot", ko:"썩다, 부패하다; 부패, 쇠퇴"},{en:"mutate", ko:"변형되다, 돌연변이가 되다"},{en:"acupuncture", ko:"침술"},{en:"coarse", ko:"거친, 조잡한, 상스러운"},{en:"crude", ko:"거친, 가공하지 않은"},{en:"sterile", ko:"불임의, 살균된"},{en:"arid", ko:"마른, 불모의, 무미건조한"},{en:"blunder", ko:"큰 실수; 큰 실수를 하다"},{en:"hypnosis", ko:"최면"},{en:"humane", ko:"인도적인, 인본주의의"},{en:"subsist", ko:"근근이 살아가다, 존속하다"},{en:"thrift", ko:"절약, 검소"},{en:"baffle", ko:"당황하게 하다"},{en:"perplex", ko:"당혹하게 하다, 난처하게 하다"},{en:"inherent", ko:"타고난, 내재된, 본질적인"},{en:"naive", ko:"순진한, 순진해 빠진"},{en:"awful", ko:"끔찍한, 지독한"},{en:"formidable", ko:"어마어마한, 가공할"},{en:"enthusiasm", ko:"열광, 열정"},{en:"desperate", ko:"필사적인, 자포자기한, 절망적인"},{en:"hazard", ko:"위험 (요소)"},{en:"jeopardy", ko:"위험"},{en:"fatal", ko:"치명적인, 운명의"},{en:"lethal", ko:"독성의, 치명적인"},{en:"tentative", ko:"잠정적인, 머뭇거리는"},{en:"euthanasia", ko:"안락사"},{en:"sewage", ko:"하수, 오물"},{en:"dump", ko:"헐값에 내다 팔다, 내버리다, 쏟아 붓다, 쓰레기 더미, 폐기물 처리장"},{en:"sake", ko:"위함, 이익, 목적"},{en:"squander", ko:"낭비하다, 허비하다"},{en:"skim", ko:"훑어보다, 스치며 지나가다, (액체 위 거품을) 걷어내다"},{en:"prose", ko:"산문 (산문체), 단조로운 글"},{en:"encyclopedia", ko:"백과사전"},{en:"foe", ko:"적, 원수"},{en:"object", ko:"반대하다, 물체, 목표"},{en:"forfeit", ko:"몰수당하다, 상실, 벌금, 몰수품"},{en:"bind", ko:"묶다, 매다"},{en:"capable", ko:"유능한, ~할 수 있는"},{en:"pirate", ko:"해적, 불법 복제자, 약탈하다, 불법 복제하다"},{en:"camouflage", ko:"위장, 위장하다, 감추다"},{en:"fabricate", ko:"만들다, 조작하다, 위조하다"},{en:"forge", ko:"만들다, 구축하다, 위조하다"},{en:"falsify", ko:"속이다, 위조하다, 틀렸음을 입증하다"},{en:"fraud", ko:"사기(꾼)"},{en:"courteous", ko:"예의 바른"},{en:"pliable", ko:"유연한, 순응적인"},{en:"ripen", ko:"익다(익히다), 숙성하다(숙성시키다)"},{en:"clumsy", ko:"어색한, 서투른, 어설픈"},{en:"pressing", ko:"긴급한, 절박한, 밀어부친"},{en:"neglect", ko:"무시하다, 태만하다, 소홀히 하다, 방치, 태만"},{en:"soothe", ko:"달래다, 진정시키다, 완화시키다"},{en:"mitigate", ko:"누그러뜨리다, 진정시키다"},{en:"alleviate", ko:"완화시키다, 덜다"},{en:"plague", ko:"전염병, 괴롭히다"},{en:"rampant", ko:"번성하는, 무성하는"},{en:"pervasive", ko:"만연한, 스며드는"},{en:"operate", ko:"작동하다(시키다), 수술하다 (on)"},{en:"outset", ko:"시작, 발단"},{en:"setback", ko:"반태, 실패, 차질, 지연, 퇴보"},{en:"pardon", ko:"용서하다, 용서, 사면"},{en:"condone", ko:"용납하다, 용서하다"},{en:"condense", ko:"응축(농축)시키다, 요약하다"},{en:"abridge", ko:"요약(축약)하다, 단축하다"},{en:"congestion", ko:"혼잡, 인구 과잉, 밀집"},{en:"occupation", ko:"직업, 점유, 점령"},{en:"adept", ko:"정통한, 능숙한, 숙련가, 달인"},{en:"sage", ko:"현자, 현명한"},{en:"empirical", ko:"경험적인, 경험의"},{en:"priority", ko:"우선 사항, 우선(권)"},{en:"entrepreneurship", ko:"기업가 정신"},{en:"superintend", ko:"관리하다, 감독하다"},{en:"mode", ko:"방식, 방법, 형식, 관습"},{en:"modest", ko:"겸손한, 보통의, 적당한"},{en:"immediate", ko:"즉각적인, 당장의"},{en:"inclined", ko:"~하고 싶어 하는, 경향이 있는"},{en:"prone", ko:"~하기 쉬운, 경향이 있는"},{en:"grieve", ko:"슬퍼하다, 비탄하다"},{en:"lament", ko:"한탄하다, 슬퍼하다, 애도하다"},{en:"implore", ko:"간청하다"},{en:"solicit", ko:"간청하다, 요청하다"},{en:"entreat", ko:"간청하다, 간곡히 원하다"},{en:"entail", ko:"수반하다, 필요로 하다"},{en:"eccentric", ko:"괴상한, 별난, 괴짜"},{en:"decipher", ko:"해독하다, 풀다"},{en:"literate", ko:"글을 읽고 쓸 줄 아는"},{en:"friction", ko:"마찰, 갈등, 불화"},{en:"practical", ko:"현실적인, 실용적인"},{en:"tremble", ko:"떨다, 전율하다"},{en:"harness", ko:"이용하다, 활용하다, 마구(馬具)"},{en:"bestow", ko:"주다, 수여하다"},{en:"endow", ko:"기부하다, 부여하다"},{en:"qualify", ko:"자격(적격)을 얻다(주다)"},{en:"exempt", ko:"(의무 책임을) 면제하다, 면제되는"},{en:"irrespective", ko:"~에 상관없는 (of)"},{en:"wind", ko:"바람, 강풍, 감다, 굽어지다, 돌다"},{en:"blow", ko:"(바람이) 불다, 강타, 타격"},{en:"colloquial", ko:"구어(체)의, 대화체의"},{en:"akin", ko:"친척의, 유사한 (to)"},{en:"valid", ko:"유효한, 효과가 있는, 정당한, 타당한"},{en:"accredit", ko:"~의 공으로 돌리다(간주하다), 승인하다"},{en:"divulge", ko:"폭로하다, 누설하다"},{en:"assert", ko:"주장하다, 단언하다"},{en:"delicate", ko:"연약한, 세심한, 까다로운, 섬세한"},{en:"infirm", ko:"허약한, 노쇠한, 병약자"},{en:"faint", ko:"기절하다, 실신하다, 희미한, 어렴풋한"},{en:"overcast", ko:"흐린, 구름이 뒤덮인"},{en:"gauge", ko:"평가(측정)하다, 측정 장치, 중량, 치수"},{en:"dimension", ko:"차원, 치수, 규모, 측면"},{en:"fable", ko:"우화, 전설, 꾸며낸 이야기"},{en:"prodigious", ko:"거대한, 놀라운, 엄청난"},{en:"salient", ko:"눈에 띄는, 주요한"},{en:"preeminent", ko:"탁월한, 우수한"},{en:"content", ko:"만족하는, 만족시키다, 내용(물)"},{en:"interfere", ko:"방해하다(with), 간섭하다(in)"},{en:"hamper", ko:"방해하다"},{en:"hinder", ko:"방해하다, 막다"},{en:"turbulent", ko:"휘몰아치는, 격동의, 사나운"},{en:"holistic", ko:"전체론의, 전체론적인"},{en:"meadow", ko:"목초지, 초원"},{en:"barn", ko:"창고, 헛간, 외양간"},{en:"timber", ko:"목재, 재목"},{en:"sphere", ko:"구, 영역, 범위"},{en:"terrestrial", ko:"지구의, 육생의"},{en:"relentless", ko:"끊임없는, 가차 없는"},{en:"blaze", ko:"활활 타다, 불길, 빛남, 타오르다"},{en:"flame", ko:"불길, 불꽃, 타오르다, 붉게 타오르다"},{en:"spur", ko:"박차, 자극, 박차를 가하다, 자극하다, 격려하다"},{en:"animate", ko:"생기를 주다, 생력을 불어넣다, 살아 있는"},{en:"mingle", ko:"섞이다, 어우러지다"},{en:"impetus", ko:"자극, 충동, 추진력"},{en:"stagnant", ko:"고여 있는, 침체된"},{en:"stubborn", ko:"고집 센, 완고한"},{en:"rigid", ko:"엄격한, 완고한, 융통성 없는"},{en:"capricious", ko:"변덕스러운"},{en:"volatile", ko:"휘발성의, 불안정한, 변덕스러운"},{en:"exalt", ko:"칭찬하다, 높이다"},{en:"surge", ko:"밀려들다, 급증하다, 급증"},{en:"swarm", ko:"떼, 무리, 떼를 지어 다니다"},{en:"multitude", ko:"다수, 대중"},{en:"plot", ko:"음모, 줄거리, 음모를 꾸미다"},{en:"intrigue", ko:"흥미를 불러일으키다, 음모를 꾸미다, 음모"},{en:"contrive", ko:"고안하다, 꾸미다"},{en:"adorn", ko:"꾸미다, 장식하다"},{en:"apparatus", ko:"장치, 기구, 기계"},{en:"alternate", ko:"번갈아 나오는, 교대로 일어나는, 번갈아 하다"},{en:"altruism", ko:"이타주의, 이타심"},{en:"doze", ko:"졸다, 낮잠"},{en:"procrastinate", ko:"미루다, 지체하다"},{en:"thrust", ko:"밀다, 찌르다, 밀기, 추력"},{en:"heedless", ko:"부주의한"},{en:"servile", ko:"굽실거리는, 비굴한"},{en:"calamity", ko:"재난, 재앙"},{en:"catastrophe", ko:"재앙, 대참사"},{en:"insulate", ko:"절연 처리를 하다, 보호하다"},{en:"polarize", ko:"양극화하다, 대립시키다"},{en:"overbearing", ko:"고압적인, 거만한"},{en:"feast", ko:"연회, 잔치, 마음껏 먹다"},{en:"sanction", ko:"제재, 허가, 제재를 가하다"},{en:"inflammatory", ko:"선동적인, 강한 분노를 유발하는"},{en:"fragrant", ko:"향기로운"},{en:"ferment", ko:"발효되다, 발효시키다"},{en:"afflict", ko:"괴롭히다, 고통을 주다"},{en:"bully", ko:"괴롭히다, 약자를 괴롭히는 사람, 불량배"},{en:"rebuke", ko:"심하게 꾸짖다, 질책하다, 비난"},{en:"reproach", ko:"비난하다, 꾸짖다, 비난, 질책"},{en:"ridicule", ko:"비웃다, 조롱하다, 조롱"},{en:"jury", ko:"배심원단"},{en:"testify", ko:"증언하다, 증명하다"},{en:"testimony", ko:"증언, 증거"},{en:"verdict", ko:"판결, 결정"},{en:"repent", ko:"후회하다, 뉘우치다"},{en:"pacify", ko:"진정시키다, 평화를 가져오다"},{en:"policy", ko:"정책, 방침"},{en:"oath", ko:"맹세, 선서"},{en:"allure", ko:"매혹하다, 유혹하다, 매력"},{en:"tempt", ko:"유혹하다, 부추기다"},{en:"sculpture", ko:"조각상, 조각"},{en:"adjoin", ko:"인접하다, 붙어 있다"},{en:"nomadic", ko:"유목의, 방랑의"},{en:"detour", ko:"우회로, 우회하다"},{en:"embark", ko:"승선하다, 착수하다"},{en:"lodge", ko:"숙박하다, 오두막, 하숙하다"},{en:"probe", ko:"철저히 조사하다, 캐묻다, 조사"},{en:"investigate", ko:"조사하다, 수사하다"},{en:"overhaul", ko:"점검하다, 정비하다, 점검"},{en:"remnant", ko:"나머지, 잔재"},{en:"annex", ko:"합병하다, 부가물, 별관"},{en:"anguish", ko:"고통, 괴로움"},{en:"gratify", ko:"만족시키다, 기쁘게 하다"},{en:"grudge", ko:"원한, 유감, 억울해하다"},{en:"impudent", ko:"무례한, 뻔뻔스러운"},{en:"assail", ko:"공격하다, 괴롭히다"},{en:"rebel", ko:"반항아, 반역자, 반항하다"},{en:"turmoil", ko:"혼란, 소란"},{en:"demolish", ko:"파괴하다, 허물다"},{en:"breach", ko:"위반, 침해, 어기다"},{en:"infringe", ko:"침해하다, 위반하다"},{en:"worsen", ko:"악화되다, 악화시키다"},{en:"exacerbate", ko:"악화시키다"},{en:"deteriorate", ko:"악화되다, 퇴보하다"},{en:"unerring", ko:"실수가 없는, 정확한"},{en:"infallible", ko:"실수가 없는, 확실한"},{en:"underpin", ko:"뒷받침하다, 보강하다"},{en:"dismal", ko:"음울한, 참담한"},{en:"dismay", ko:"실망, 경악, 실망시키다"},{en:"predominant", ko:"지배적인, 우세한"},{en:"subordinate", ko:"하위의, 부하, 종속시키다"},{en:"hurl", ko:"던지다, 내뿜다"},{en:"bargain", ko:"흥정하다, 싸게 산 물건, 협상"},{en:"absolute", ko:"절대적인, 완전한"}];
 
 function makeQuiz() {
   const pool = [...VOCAB_WORDS].sort(() => Math.random() - 0.5);
@@ -242,13 +480,17 @@ function makeQuiz() {
   return { correct, opts, chosen: null, streak: 0 };
 }
 
+
 function fmt(sec) {
   const h = Math.floor(sec/3600), m = Math.floor((sec%3600)/60), s = sec%60;
-  return h > 0 ? `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}` : `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  if (h > 0) return `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
 }
 function fmtHuman(sec) {
   const m = Math.floor(sec/60), s = sec%60;
-  return m === 0 ? `${s}초` : s === 0 ? `${m}분` : `${m}분 ${s}초`;
+  if (m === 0) return `${s}초`;
+  if (s === 0) return `${m}분`;
+  return `${m}분 ${s}초`;
 }
 function today() { return new Date().toISOString().split('T')[0]; }
 function hexAlpha(hex, a) {
@@ -256,37 +498,47 @@ function hexAlpha(hex, a) {
   return `rgba(${r},${g},${b},${a})`;
 }
 
-// ── Components ──
+// ── DonutChart ──────────────────────────────────────────────
 function DonutChart({ pct, color, size = 100 }) {
-  const r = 40, circ = 2 * Math.PI * r, dash = (pct / 100) * circ;
+  const r = 40, cx = 50, cy = 50;
+  const circ = 2 * Math.PI * r;
+  const dash = (pct / 100) * circ;
   return (
-    <svg width={size} height={size} viewBox="0 0 100 100">
-      <circle cx="50" cy="50" r={r} fill="none" stroke="#f0f3f8" strokeWidth="12"/>
-      <circle cx="50" cy="50" r={r} fill="none" stroke={color} strokeWidth="12"
-        strokeDasharray={`${dash} ${circ}`} strokeDashoffset={circ/4} strokeLinecap="round" style={{transition:'stroke-dasharray 0.6s'}}/>
-      <text x="50" y="55" textAnchor="middle" style={{fontSize:'20px', fontWeight:'900', fill: color}}>{pct}%</text>
+    <svg width={size} height={size} viewBox="0 0 100 100" className="donut-svg">
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke="#f0f3f8" strokeWidth="12"/>
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke={color} strokeWidth="12"
+        strokeDasharray={`${dash} ${circ}`} strokeDashoffset={circ/4}
+        strokeLinecap="round" style={{transition:'stroke-dasharray 0.6s ease'}}/>
+      <text x="50" y="54" textAnchor="middle"
+        style={{fontSize:'20px', fontWeight:'900', fontFamily:'Nunito,sans-serif', fill: color}}>
+        {pct}%
+      </text>
     </svg>
   );
 }
 
+// ── App ──────────────────────────────────────────────────────
 function App() {
   const [view, setView] = useState('home');
   const [subjects, setSubjects] = useState(() => JSON.parse(localStorage.getItem('fo_sub') || '[]'));
   const [sessions, setSessions] = useState(() => JSON.parse(localStorage.getItem('fo_sess') || '[]'));
   const [selectedReport, setSelectedReport] = useState(null);
-  
+
+  // timer state
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const timerRef = useRef(null);
 
+  // form state
   const [logDate, setLogDate] = useState(today());
   const [selectedSub, setSelectedSub] = useState('');
   const [correct, setCorrect] = useState('');
   const [total, setTotal] = useState('');
   const [newSubName, setNewSubName] = useState('');
   const [newSubColor, setNewSubColor] = useState(COLORS[0]);
+  // ── quiz state ──
   const [quizState, setQuizState] = useState(() => makeQuiz());
 
   useEffect(() => {
@@ -294,18 +546,43 @@ function App() {
     localStorage.setItem('fo_sess', JSON.stringify(sessions));
   }, [subjects, sessions]);
 
+  // timer
   useEffect(() => {
-    if (isRunning) timerRef.current = setInterval(() => setTime(p => p + 1), 1000);
-    else clearInterval(timerRef.current);
+    if (isRunning) {
+      timerRef.current = setInterval(() => setTime(p => p + 1), 1000);
+    } else {
+      clearInterval(timerRef.current);
+    }
     return () => clearInterval(timerRef.current);
   }, [isRunning]);
 
+  const startStop = () => {
+    if (!isRunning) { setIsRunning(true); }
+    else { setIsRunning(false); setIsFinished(true); }
+  };
+
+  const saveSession = () => {
+    const c = Number(correct) || 0, t = Number(total) || 0;
+    const score = t > 0 ? Math.round((c / t) * 100) : null;
+    setSessions(prev => [{
+      id: Date.now(), subject: selectedSub, duration: time,
+      score, scoreLabel: t > 0 ? `${c} / ${t}` : '-', date: logDate
+    }, ...prev]);
+    setTime(0); setIsFinished(false); setCorrect(''); setTotal(''); setView('home');
+  };
+
+  const discardSession = () => {
+    setTime(0); setIsFinished(false); setCorrect(''); setTotal('');
+  };
+
+  // stats helpers
   const getSubStats = (name) => {
     const ss = sessions.filter(s => s.subject === name);
     const totalSec = ss.reduce((a, s) => a + s.duration, 0);
     const scored = ss.filter(s => s.score !== null);
     const avgScore = scored.length > 0 ? Math.round(scored.reduce((a,s) => a+s.score, 0)/scored.length) : 0;
-    return { totalSec, avgScore, count: ss.length, avgSec: ss.length ? Math.floor(totalSec/ss.length) : 0 };
+    const avgSec = ss.length > 0 ? Math.floor(totalSec/ss.length) : 0;
+    return { totalSec, avgScore, avgSec, count: ss.length };
   };
 
   const weeklyData = useMemo(() => {
@@ -314,15 +591,23 @@ function App() {
       const d = new Date(); d.setDate(d.getDate() - i);
       const ds = d.toISOString().split('T')[0];
       const secs = sessions.filter(s => s.date === ds).reduce((a,s) => a+s.duration, 0);
-      arr.push({ ds, day: DAYS_KO[d.getDay()], secs, isToday: i===0 });
+      const day = DAYS_KO[d.getDay()];
+      arr.push({ ds, day, secs, isToday: i===0 });
     }
-    const max = Math.max(...arr.map(d => d.secs), 1);
-    return arr.map(d => ({ ...d, pct: (d.secs / max) * 100 }));
+    const maxSecs = Math.max(...arr.map(d => d.secs), 1);
+    return arr.map(d => ({ ...d, pct: Math.max((d.secs / maxSecs) * 100, d.secs > 0 ? 8 : 0) }));
   }, [sessions]);
 
-  // ── Rendering Views ──
+  const todayTotal = sessions.filter(s => s.date === today()).reduce((a,s) => a+s.duration, 0);
+  const todayCount = sessions.filter(s => s.date === today()).length;
+  const allTotal = sessions.reduce((a,s) => a+s.duration, 0);
+  const allScored = sessions.filter(s => s.score !== null);
+  const avgAcc = allScored.length > 0 ? Math.round(allScored.reduce((a,s) => a+s.score, 0)/allScored.length) : 0;
+
+  // ─── VIEWS ──────────────────────────────────────────────────
   return (
     <div>
+      {/* NAV */}
       <nav className="nav">
         <div className="nav-logo">FocusOn</div>
         <div className="nav-tabs">
@@ -333,212 +618,440 @@ function App() {
       </nav>
 
       <div className="container">
+
+        {/* ══════ HOME ══════ */}
         {view === 'home' && (
-          <div className="main-grid">
-            {/* Left Column */}
-            <div className="main-column">
-              {/* Quiz */}
-              <div className="quiz-card">
-                <div className="quiz-header">
-                  <div style={{fontSize:11, fontWeight:700, color:'var(--primary-dark)'}}>📝 오늘의 단어</div>
-                  <div style={{fontSize:12, fontWeight:700, color:'var(--text-mid)'}}>{quizState.streak > 0 ? `🔥 ${quizState.streak}연속` : '정답은?'}</div>
-                </div>
-                <div className="quiz-word">{quizState.correct.en}</div>
-                <div className="quiz-options">
-                  {quizState.opts.map((opt, i) => (
-                    <button key={i} className={`quiz-option ${quizState.chosen && opt.en === quizState.correct.en ? 'correct' : (quizState.chosen === opt ? 'wrong' : '')}`}
-                      onClick={() => {
-                        if(quizState.chosen) return;
-                        setQuizState(p => ({...p, chosen: opt, streak: opt.en === p.correct.en ? p.streak + 1 : 0}));
-                        setTimeout(() => setQuizState(p => ({...makeQuiz(), streak: p.streak})), 1000);
-                      }}>
-                      {opt.ko}
-                    </button>
-                  ))}
-                </div>
-              </div>
+          <>
+            {/* ── Tablet: 2-column dashboard grid ── */}
+            {/* Mobile stacking is handled naturally; tablet uses CSS grid via .dashboard-grid */}
+            <div className="dashboard-grid">
 
-              {/* Hero */}
-              <div className="hero-strip">
-                <div className="hero-greeting">꾸준함이 실력을 만듭니다 🎯</div>
-                <div className="hero-title">오늘 총 {Math.floor(sessions.filter(s=>s.date===today()).reduce((a,s)=>a+s.duration,0)/60)}분<br/>학습 완료!</div>
-                <div className="hero-stats">
-                  <div>
-                    <div className="hero-stat-val">{sessions.filter(s=>s.date===today()).length}회</div>
-                    <div className="hero-stat-lbl">학습 세션</div>
-                  </div>
-                  <div style={{width:1, background:'rgba(255,255,255,0.3)'}}></div>
-                  <div>
-                    <div className="hero-stat-val">{subjects.length}개</div>
-                    <div className="hero-stat-lbl">진행 과목</div>
-                  </div>
-                </div>
-              </div>
+            {/* LEFT COLUMN */}
+            <div className="dashboard-col">
 
-              {/* Chart */}
-              <div className="card">
-                <div className="section-title">주간 학습 현황</div>
-                <div className="week-chart-wrap">
-                  {weeklyData.map((d,i) => (
-                    <div key={i} className="week-col">
-                      <div className="week-bar-bg" style={{height: 70}}>
-                        <div className={`week-bar-fill ${d.isToday?'today':'past'}`} style={{height: `${d.pct}%`}}/>
-                      </div>
-                      <div className={`week-label ${d.isToday?'today':''}`}>{d.day}</div>
-                    </div>
-                  ))}
+            {/* Hero */}
+            <div className="hero-strip">
+              <div className="hero-greeting">오늘도 화이팅 🎯</div>
+              <div className="hero-title">꾸준함이<br/>실력이 됩니다</div>
+              <div className="hero-stats">
+                <div>
+                  <div className="hero-stat-val">{Math.floor(todayTotal/60)}<span style={{fontSize:16,fontWeight:700}}>분</span></div>
+                  <div className="hero-stat-lbl">오늘 학습</div>
                 </div>
-              </div>
-
-              {/* Subjects pills */}
-              <div className="sub-pill-row">
-                {subjects.map(s => (
-                  <div key={s.id} className="sub-pill" onClick={() => setSelectedReport(s)}>
-                    <div className="sub-pill-dot" style={{background: s.color}}/>
-                    <span style={{color: s.color}}>{s.name}</span>
-                  </div>
-                ))}
+                <div style={{width:'1px', background:'rgba(255,255,255,0.3)', margin:'2px 0'}}></div>
+                <div>
+                  <div className="hero-stat-val">{todayCount}<span style={{fontSize:16,fontWeight:700}}>회</span></div>
+                  <div className="hero-stat-lbl">오늘 세션</div>
+                </div>
+                <div style={{width:'1px', background:'rgba(255,255,255,0.3)', margin:'2px 0'}}></div>
+                <div>
+                  <div className="hero-stat-val">{allScored.length > 0 ? avgAcc : '—'}{allScored.length > 0 && <span style={{fontSize:16,fontWeight:700}}>%</span>}</div>
+                  <div className="hero-stat-lbl">평균 정답률</div>
+                </div>
               </div>
             </div>
 
-            {/* Right Column (Side) */}
-            <div className="side-column">
-              <div className="quick-stats">
-                <div className="qs-card"><div className="qs-icon">⏱</div><div className="qs-val">{Math.floor(sessions.reduce((a,s)=>a+s.duration,0)/60)}m</div><div className="qs-lbl">누적 시간</div></div>
-                <div className="qs-card"><div className="qs-icon">✍️</div><div className="qs-val">{sessions.length}</div><div className="qs-lbl">총 세션</div></div>
-                <div className="qs-card">
-                  <div style={{fontSize:11, fontWeight:700, color:'var(--text-light)', marginBottom:4}}>평균 정답률</div>
-                  <div className="qs-val" style={{color:'var(--primary)'}}>
-                    {sessions.filter(s=>s.score!==null).length ? Math.round(sessions.filter(s=>s.score!==null).reduce((a,s)=>a+s.score,0)/sessions.filter(s=>s.score!==null).length) : 0}%
+            {/* Quick stats */}
+            <div className="quick-stats">
+              <div className="qs-card">
+                <div className="qs-icon">📚</div>
+                <div className="qs-val">{subjects.length}</div>
+                <div className="qs-lbl">과목</div>
+              </div>
+              <div className="qs-card">
+                <div className="qs-icon">⏱</div>
+                <div className="qs-val">{Math.floor(allTotal/3600) > 0 ? Math.floor(allTotal/3600)+'h' : Math.floor(allTotal/60)+'m'}</div>
+                <div className="qs-lbl">총 학습시간</div>
+              </div>
+              <div className="qs-card">
+                <div className="qs-icon">✍️</div>
+                <div className="qs-val">{sessions.length}</div>
+                <div className="qs-lbl">총 세션</div>
+              </div>
+            </div>
+
+            {/* Weekly chart */}
+            <div className="card">
+              <div className="section-title">주간 학습 현황</div>
+              <div className="week-chart-wrap">
+                {weeklyData.map((d,i) => (
+                  <div key={i} className="week-col">
+                    <div className="week-bar-bg" style={{height:'100%', flex:'none', width:'100%', borderRadius:'10px', position:'relative', overflow:'hidden'}}>
+                      <div className={`week-bar-fill ${d.isToday?'today':'past'}`}
+                        style={{height:`${d.pct}%`, position:'absolute', bottom:0, left:0, right:0}}/>
+                    </div>
+                    <div className={`week-label ${d.isToday?'today':''}`}>
+                      {d.isToday ? '오늘' : d.day}
+                    </div>
                   </div>
+                ))}
+              </div>
+              {weeklyData.some(d=>d.secs>0) && (
+                <div style={{marginTop:12, fontSize:12, color:'var(--text-light)', fontWeight:600, textAlign:'right'}}>
+                  이번 주 {Math.floor(weeklyData.reduce((a,d)=>a+d.secs,0)/60)}분 학습
+                </div>
+              )}
+            </div>
+
+            {/* Subject pills */}
+            {subjects.length > 0 && (
+              <div className="card">
+                <div className="section-title">과목별 현황</div>
+                <div className="sub-pill-row">
+                  {subjects.map(sub => {
+                    const st = getSubStats(sub.name);
+                    return (
+                      <div key={sub.id} className="sub-pill" onClick={() => setSelectedReport(sub)}>
+                        <div className="sub-pill-dot" style={{background: sub.color}}/>
+                        <span style={{color: sub.color}}>{sub.name}</span>
+                        <span style={{color:'var(--text-light)', fontWeight:600, fontSize:12}}>
+                          {Math.floor(st.totalSec/60)}분
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
+            )}
 
-              <div className="card" style={{padding:'20px'}}>
-                <div className="section-title">최근 학습 기록</div>
+            </div>{/* /LEFT COLUMN */}
+
+            {/* RIGHT COLUMN */}
+            <div className="dashboard-col">
+
+            {/* Quiz Card */}
+            {(() => {
+              const { correct, opts, chosen, streak } = quizState;
+              const answered = chosen !== null;
+              const pick = (opt) => {
+                if (answered) return;
+                const isCorrect = opt.en === correct.en;
+                setQuizState(prev => ({ ...prev, chosen: opt, streak: isCorrect ? prev.streak + 1 : 0 }));
+                if (isCorrect) {
+                  setTimeout(() => setQuizState(makeQuiz()), 900);
+                } else {
+                  setTimeout(() => setQuizState(prev => ({ ...makeQuiz(), streak: 0 })), 1400);
+                }
+              };
+              return (
+                <div className="quiz-card">
+                  <div className="quiz-header">
+                    <div className="quiz-label">📝 단어 퀴즈</div>
+                    <div className="quiz-streak">{streak > 0 ? `🔥 ${streak}연속 정답` : '이 단어의 뜻은?'}</div>
+                  </div>
+                  <div className="quiz-word">{correct.en}</div>
+                  <div className="quiz-options">
+                    {opts.map((opt, i) => {
+                      let cls = 'quiz-option';
+                      if (answered) {
+                        cls += ' disabled';
+                        if (opt.en === correct.en) cls += ' reveal';
+                        else if (chosen && opt.en === chosen.en) cls += ' wrong';
+                      }
+                      return (
+                        <button key={i} className={cls} onClick={() => pick(opt)}>
+                          {opt.ko}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div className={`quiz-result ${answered ? (chosen && chosen.en === correct.en ? 'ok' : 'fail') : ''}`}>
+                    {answered ? (chosen && chosen.en === correct.en ? '✅ 정답!' : `❌ 정답: ${correct.ko}`) : ''}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Recent records */}
+            <div className="card" style={{padding:'20px'}}>
+              <div className="section-title">최근 기록</div>
+              {sessions.length === 0 ? (
+                <div className="empty-state">
+                  <div className="empty-icon">📋</div>
+                  아직 학습 기록이 없어요.<br/>타이머로 첫 세션을 시작해보세요!
+                </div>
+              ) : (
                 <table className="record-table">
-                  <thead><tr><th>과목</th><th>시간</th><th>정답률</th></tr></thead>
+                  <thead>
+                    <tr>
+                      <th>과목</th>
+                      <th>시간</th>
+                      <th>정답/문항</th>
+                      <th>정답률</th>
+                      <th></th>
+                    </tr>
+                  </thead>
                   <tbody>
-                    {sessions.slice(0, 8).map(s => {
+                    {sessions.slice(0, 10).map(s => {
                       const sub = subjects.find(x => x.name === s.subject);
+                      const color = sub?.color || '#b0b8c8';
                       return (
                         <tr key={s.id}>
-                          <td><div className="sub-chip" style={{background: hexAlpha(sub?.color||'#ccc', 0.1), color: sub?.color}}>{s.subject}</div></td>
-                          <td style={{fontWeight:700}}>{Math.floor(s.duration/60)}분</td>
-                          <td style={{color: s.score >= 80 ? 'var(--primary-dark)' : 'var(--text-mid)'}}>{s.score ?? '-'}%</td>
+                          <td>
+                            <div className="sub-chip" style={{background: hexAlpha(color, 0.12), color}}>
+                              <div className="sub-chip-dot" style={{background: color}}/>
+                              {s.subject}
+                            </div>
+                            <div style={{fontSize:10, color:'var(--text-light)', marginTop:3, paddingLeft:2}}>{s.date}</div>
+                          </td>
+                          <td style={{fontWeight:700, color:'var(--text)'}}>{fmtHuman(s.duration)}</td>
+                          <td style={{color:'var(--text-mid)', fontWeight:600}}>{s.scoreLabel}</td>
+                          <td>
+                            {s.score !== null ? (
+                              <span className="score-pill" style={{background: hexAlpha(color, 0.12), color}}>{s.score}%</span>
+                            ) : (
+                              <span style={{color:'var(--text-light)', fontSize:13}}>—</span>
+                            )}
+                          </td>
+                          <td>
+                            <button className="del-btn"
+                              onClick={() => { if(confirm('삭제하시겠습니까?')) setSessions(p => p.filter(x => x.id !== s.id)); }}>
+                              ×
+                            </button>
+                          </td>
                         </tr>
                       );
                     })}
                   </tbody>
                 </table>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {view === 'timer' && (
-          <div style={{maxWidth:600, margin:'0 auto'}}>
-            <div className="card">
-              <div className="timer-wrap">
-                <div className="timer-ring" style={{background: `conic-gradient(var(--primary) ${(time%3600)/3600*100}%, #f0f3f8 0%)`}}>
-                  <div className="timer-ring-inner">
-                    <div className="timer-num">{fmt(time)}</div>
-                    {isRunning && <div className="pulse" style={{fontSize:12, color:'var(--primary)', fontWeight:800, marginTop:4}}>FOCUSING</div>}
-                  </div>
-                </div>
-              </div>
-
-              {!isFinished ? (
-                <div style={{position:'relative'}}>
-                  <label className="input-label">과목 선택</label>
-                  <div className="dropdown-trigger" onClick={() => !isRunning && setIsDropdownOpen(!isDropdownOpen)}>
-                    {selectedSub || <span style={{color:'var(--text-light)'}}>과목을 선택하세요</span>}
-                    <span>{isDropdownOpen ? '▲' : '▼'}</span>
-                  </div>
-                  {isDropdownOpen && (
-                    <div className="dropdown-list">
-                      {subjects.map(s => (
-                        <div key={s.id} className="dropdown-option" onClick={() => {setSelectedSub(s.name); setIsDropdownOpen(false)}}>
-                          <div style={{width:10, height:10, borderRadius:'50%', background: s.color}}/>{s.name}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  <button className={`btn-primary ${isRunning ? 'btn-stop' : ''}`} onClick={() => isRunning ? (setIsRunning(false), setIsFinished(true)) : setIsRunning(true)}>
-                    {isRunning ? '정지 및 기록' : '학습 시작'}
-                  </button>
-                </div>
-              ) : (
-                <div style={{textAlign:'center'}}>
-                  <div style={{marginBottom:20, fontWeight:700}}>오늘 {fmtHuman(time)} 공부했네요!</div>
-                  <div style={{display:'flex', gap:10, marginBottom:16}}>
-                    <input type="number" className="input-field" placeholder="맞힌 문제" value={correct} onChange={e=>setCorrect(e.target.value)}/>
-                    <input type="number" className="input-field" placeholder="전체 문제" value={total} onChange={e=>setTotal(e.target.value)}/>
-                  </div>
-                  <button className="btn-primary" onClick={() => {
-                    const s = total > 0 ? Math.round((correct/total)*100) : null;
-                    setSessions([{id:Date.now(), subject:selectedSub, duration:time, score:s, date:today()}, ...sessions]);
-                    setTime(0); setIsFinished(false); setView('home');
-                  }}>저장하기</button>
-                </div>
               )}
             </div>
+
+            </div>{/* /RIGHT COLUMN */}
+            </div>{/* /dashboard-grid */}
+          </>
+        )}
+
+        {/* ══════ TIMER ══════ */}
+        {view === 'timer' && (
+          <div className="timer-card-wrap">
+          <div className="card">
+            {/* Timer display */}
+            <div className="timer-wrap">
+              <div className="timer-ring" style={{
+                background: isRunning
+                  ? `conic-gradient(#3ecf8e ${Math.min((time/3600)*100, 100)}%, #f0f3f8 0%)`
+                  : 'conic-gradient(#f0f3f8 100%, #f0f3f8 0%)'
+              }}>
+                <div className="timer-ring-inner">
+                  <div className="timer-num">{fmt(time)}</div>
+                  {isRunning && <div className="timer-state pulse">학습 중</div>}
+                  {!isRunning && time === 0 && <div className="timer-sub">준비 완료</div>}
+                  {!isRunning && time > 0 && !isFinished && <div className="timer-sub">일시정지</div>}
+                </div>
+              </div>
+            </div>
+
+            {!isFinished ? (
+              <div style={{position:'relative'}}>
+                <label className="input-label">학습 날짜</label>
+                <input type="date" className="input-field" value={logDate}
+                  onChange={e => setLogDate(e.target.value)} disabled={isRunning}/>
+
+                <label className="input-label">과목 선택</label>
+                <div className={`dropdown-trigger ${isDropdownOpen?'open':''}`}
+                  onClick={() => !isRunning && setIsDropdownOpen(p => !p)}>
+                  {selectedSub
+                    ? (() => { const sub = subjects.find(s=>s.name===selectedSub); return (
+                        <div className="sub-chip" style={{background: hexAlpha(sub?.color||'#ccc',0.12), color: sub?.color||'#ccc', padding:'3px 10px'}}>
+                          <div className="sub-chip-dot" style={{background: sub?.color||'#ccc'}}/>
+                          {selectedSub}
+                        </div>
+                      ); })()
+                    : <span style={{color:'var(--text-light)', fontWeight:600, fontSize:14}}>과목을 선택하세요</span>
+                  }
+                  <span style={{fontSize:11, color:'var(--text-light)'}}>{isDropdownOpen?'▲':'▼'}</span>
+                </div>
+
+                {isDropdownOpen && (
+                  <div className="dropdown-list" style={{marginTop:-10, marginBottom:16}}>
+                    {subjects.length === 0
+                      ? <div className="dropdown-option" style={{color:'var(--text-light)'}}>과목을 먼저 등록해주세요</div>
+                      : subjects.map(sub => (
+                          <div key={sub.id} className="dropdown-option"
+                            onClick={() => { setSelectedSub(sub.name); setIsDropdownOpen(false); }}>
+                            <div style={{width:10, height:10, borderRadius:'50%', background: sub.color}}/>
+                            <span style={{fontWeight:700}}>{sub.name}</span>
+                          </div>
+                        ))
+                    }
+                  </div>
+                )}
+
+                <button className={`btn-primary ${isRunning?'btn-stop':''}`}
+                  onClick={startStop}
+                  disabled={!selectedSub && !isRunning}>
+                  {isRunning ? '⏸  정지하기' : time > 0 ? '▶  재개하기' : '▶  학습 시작'}
+                </button>
+              </div>
+            ) : (
+              <div>
+                <div style={{textAlign:'center', marginBottom:20, color:'var(--text-mid)', fontSize:14, fontWeight:600}}>
+                  🎉 학습 완료! 총 <strong style={{color:'var(--primary)'}}>{fmtHuman(time)}</strong> 학습했어요
+                </div>
+                <div style={{display:'flex', gap:12, marginBottom:16}}>
+                  <div style={{flex:1}}>
+                    <label className="input-label">맞힌 수</label>
+                    <input type="number" min="0" className="input-field" style={{marginBottom:0}}
+                      value={correct} onChange={e=>setCorrect(e.target.value)} placeholder="0"/>
+                  </div>
+                  <div style={{flex:1}}>
+                    <label className="input-label">전체 문항</label>
+                    <input type="number" min="0" className="input-field" style={{marginBottom:0}}
+                      value={total} onChange={e=>setTotal(e.target.value)} placeholder="0"/>
+                  </div>
+                </div>
+                {total > 0 && correct >= 0 && (
+                  <div style={{textAlign:'center', marginBottom:16, fontSize:13, color:'var(--text-mid)', fontWeight:600}}>
+                    예상 정답률: <strong style={{color:'var(--primary)', fontSize:16}}>{Math.round((Number(correct)/Number(total))*100)}%</strong>
+                  </div>
+                )}
+                <button className="btn-primary" onClick={saveSession}>💾 기록 저장</button>
+                <button className="btn-ghost" onClick={discardSession}>기록 삭제하고 초기화</button>
+              </div>
+            )}
+          </div>
           </div>
         )}
 
+        {/* ══════ MANAGE ══════ */}
         {view === 'manage' && (
-          <div style={{maxWidth:600, margin:'0 auto'}}>
+          <div className="manage-grid">
+            <div>
             <div className="card">
               <div className="section-title">새 과목 등록</div>
-              <input className="input-field" placeholder="과목 이름" value={newSubName} onChange={e=>setNewSubName(e.target.value)}/>
-              <div style={{display:'flex', gap:8, marginBottom:20}}>
+              <label className="input-label" style={{marginTop:8}}>과목 이름</label>
+              <input className="input-field" placeholder="예: 수학, 영어, 물리..." value={newSubName}
+                onChange={e => setNewSubName(e.target.value)}
+                onKeyDown={e => e.key==='Enter' && newSubName && (setSubjects(p=>[...p,{id:Date.now(),name:newSubName,color:newSubColor}]),setNewSubName(''))}
+              />
+              <label className="input-label">색상 선택</label>
+              <div className="color-swatches">
                 {COLORS.map(c => (
-                  <div key={c} onClick={() => setNewSubColor(c)} style={{width:30, height:30, borderRadius:8, background:c, cursor:'pointer', border: newSubColor===c ? '3px solid #1a1d27' : 'none'}}/>
+                  <div key={c} className={`color-swatch ${newSubColor===c?'sel':''}`}
+                    style={{background:c}} onClick={() => setNewSubColor(c)}/>
                 ))}
               </div>
-              <button className="btn-primary" onClick={() => {
-                if(!newSubName) return;
-                setSubjects([...subjects, {id:Date.now(), name:newSubName, color:newSubColor}]);
-                setNewSubName('');
-              }}>과목 추가하기</button>
+              <button className="btn-primary" style={{background: `linear-gradient(135deg, ${newSubColor}, ${newSubColor}cc)`}}
+                onClick={() => { if(!newSubName.trim()) return; setSubjects(p=>[...p,{id:Date.now(),name:newSubName.trim(),color:newSubColor}]); setNewSubName(''); }}>
+                + 과목 추가
+              </button>
             </div>
-            <div className="sub-grid">
-              {subjects.map(s => (
-                <div key={s.id} className="sub-card" onClick={() => setSelectedReport(s)}>
-                  <div style={{height:4, background:s.color, borderRadius:2, marginBottom:10}}/>
-                  <div style={{fontWeight:800}}>{s.name}</div>
-                  <div style={{fontSize:12, color:'var(--text-mid)', marginTop:4}}>{getSubStats(s.name).count}회 세션</div>
+            </div>
+            <div>
+            {subjects.length === 0 ? (
+              <div className="empty-state" style={{padding:'40px 20px'}}>
+                <div className="empty-icon">📚</div>
+                아직 과목이 없어요.<br/>위에서 첫 과목을 등록해보세요!
+              </div>
+            ) : (
+              <>
+                <div className="section-title">등록된 과목</div>
+                <div className="sub-grid">
+                  {subjects.map(sub => {
+                    const st = getSubStats(sub.name);
+                    return (
+                      <div key={sub.id} className="sub-card" onClick={() => setSelectedReport(sub)}>
+                        <div style={{height:4, background: sub.color, borderRadius:'4px', marginBottom:12}}/>
+                        <div className="sub-card-name">{sub.name}</div>
+                        <div className="sub-card-stat">⏱ {Math.floor(st.totalSec/60)}분 학습</div>
+                        <div className="sub-card-stat" style={{marginTop:4}}>✍️ {st.count}회 세션</div>
+                        {st.count > 0 && (
+                          <>
+                            <div className="mini-bar" style={{marginTop:10}}>
+                              <div className="mini-bar-fill" style={{width:`${st.avgScore}%`, background: sub.color}}/>
+                            </div>
+                            <div style={{fontSize:10, color:'var(--text-light)', fontWeight:600, marginTop:4}}>
+                              평균 정답률 {st.avgScore}%
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
-              ))}
+              </>
+            )}
             </div>
           </div>
         )}
+
       </div>
 
-      {selectedReport && (
-        <div className="modal-overlay" onClick={() => setSelectedReport(null)}>
-          <div className="modal-sheet" onClick={e=>e.stopPropagation()}>
-            <div style={{display:'flex', justifyContent:'space-between', marginBottom:20}}>
-              <h2 style={{color:selectedReport.color}}>{selectedReport.name} 리포트</h2>
-              <button onClick={()=>setSelectedReport(null)} style={{border:'none', background:'none', fontSize:24, cursor:'pointer'}}>×</button>
-            </div>
-            <div style={{display:'flex', gap:20, alignItems:'center', marginBottom:30}}>
-              <DonutChart pct={getSubStats(selectedReport.name).avgScore} color={selectedReport.color}/>
-              <div>
-                <div style={{fontSize:12, color:'var(--text-light)'}}>평균 정답률</div>
-                <div style={{fontSize:24, fontWeight:900}}>{getSubStats(selectedReport.name).avgScore}%</div>
+      {/* ══════ REPORT MODAL ══════ */}
+      {selectedReport && (() => {
+        const st = getSubStats(selectedReport.name);
+        const subSessions = sessions.filter(s => s.subject === selectedReport.name);
+        return (
+          <div className="modal-overlay" onClick={() => setSelectedReport(null)}>
+            <div className="modal-sheet" onClick={e => e.stopPropagation()}>
+              {/* Header */}
+              <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:4}}>
+                <div>
+                  <div style={{fontSize:11, fontWeight:700, color:'var(--text-light)', textTransform:'uppercase', letterSpacing:'0.8px', marginBottom:6}}>과목 리포트</div>
+                  <div style={{fontSize:24, fontWeight:900, color: selectedReport.color}}>{selectedReport.name}</div>
+                </div>
+                <button onClick={() => setSelectedReport(null)}
+                  style={{border:'none', background:'#f5f7fa', width:36, height:36, borderRadius:12, cursor:'pointer', fontSize:18, color:'var(--text-light)', display:'flex', alignItems:'center', justifyContent:'center'}}>
+                  ×
+                </button>
               </div>
+
+              {/* Donut + avg */}
+              <div className="donut-wrap">
+                <DonutChart pct={st.avgScore} color={selectedReport.color} size={110}/>
+                <div style={{flex:1}}>
+                  <div style={{fontSize:11, fontWeight:700, color:'var(--text-light)', marginBottom:6}}>회당 평균 학습</div>
+                  <div style={{fontSize:34, fontWeight:900, fontFamily:'Nunito,sans-serif', color: selectedReport.color, lineHeight:1}}>
+                    {fmtHuman(st.avgSec)}
+                  </div>
+                  <div style={{fontSize:12, color:'var(--text-light)', fontWeight:600, marginTop:8}}>{st.count}회 세션 완료</div>
+                </div>
+              </div>
+
+              {/* Stats */}
+              <div style={{background:'#f8fafb', borderRadius:20, padding:'4px 18px', marginBottom:20}}>
+                <div className="stat-row">
+                  <span className="stat-key">총 학습 시간</span>
+                  <span className="stat-val" style={{color: selectedReport.color}}>{fmtHuman(st.totalSec)}</span>
+                </div>
+                <div className="stat-row">
+                  <span className="stat-key">평균 정답률</span>
+                  <span className="stat-val" style={{color: selectedReport.color}}>{st.avgScore}%</span>
+                </div>
+                <div className="stat-row">
+                  <span className="stat-key">최근 세션</span>
+                  <span className="stat-val" style={{fontSize:14}}>
+                    {subSessions.length > 0 ? subSessions[0].date : '—'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Progress bar */}
+              <div style={{marginBottom:24}}>
+                <div style={{display:'flex', justifyContent:'space-between', fontSize:12, fontWeight:700, color:'var(--text-light)', marginBottom:8}}>
+                  <span>정답률 분포</span><span>{st.avgScore}%</span>
+                </div>
+                <div className="mini-bar" style={{height:10}}>
+                  <div className="mini-bar-fill" style={{width:`${st.avgScore}%`, background: selectedReport.color}}/>
+                </div>
+              </div>
+
+              {/* Delete button */}
+              <button className="btn-ghost" style={{marginTop:0}}
+                onClick={() => {
+                  if(confirm(`"${selectedReport.name}" 과목과 모든 기록을 삭제할까요?`)) {
+                    setSubjects(p => p.filter(s => s.id !== selectedReport.id));
+                    setSessions(p => p.filter(s => s.subject !== selectedReport.name));
+                    setSelectedReport(null);
+                  }
+                }}>
+                과목 삭제
+              </button>
             </div>
-            <button className="btn-ghost" onClick={() => {
-              if(confirm('과목을 삭제하시겠습니까?')) {
-                setSubjects(subjects.filter(s=>s.id!==selectedReport.id));
-                setSessions(sessions.filter(s=>s.subject!==selectedReport.name));
-                setSelectedReport(null);
-              }
-            }}>과목 삭제</button>
           </div>
-        </div>
-      )}
+        );
+      })()}
     </div>
   );
 }
