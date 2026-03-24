@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -141,16 +142,22 @@
   .sub-pill-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 
   /* ─── RECORD TABLE ─── */
-  .record-table { width: 100%; border-collapse: collapse; }
+  .record-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
   .record-table th {
     font-size: 11px; font-weight: 700; color: var(--text-light);
     text-transform: uppercase; letter-spacing: 0.5px;
-    padding: 0 8px 12px; text-align: center; border-bottom: 1px solid var(--border);
+    padding: 0 6px 12px; text-align: center; border-bottom: 1px solid var(--border);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-  .record-table th:first-child { text-align: left; }
+  .record-table th:first-child { text-align: left; width: 36%; }
+  .record-table th:nth-child(2) { width: 16%; }
+  .record-table th:nth-child(3) { width: 18%; }
+  .record-table th:nth-child(4) { width: 16%; }
+  .record-table th:nth-child(5) { width: 14%; }
   .record-table td {
-    padding: 14px 8px; border-bottom: 1px solid #f5f7fa;
-    text-align: center; vertical-align: middle; font-size: 14px;
+    padding: 12px 6px; border-bottom: 1px solid #f5f7fa;
+    text-align: center; vertical-align: middle; font-size: 13px;
+    overflow: hidden;
   }
   .record-table td:first-child { text-align: left; }
   .record-table tr:last-child td { border-bottom: none; }
@@ -361,8 +368,17 @@
     .card { border-radius: 28px; padding: 28px; margin-bottom: 0; }
 
     /* Record table font */
-    .record-table td { font-size: 15px; padding: 16px 10px; }
-    .record-table th { font-size: 12px; padding: 0 10px 14px; }
+    .record-table td { font-size: 14px; padding: 14px 8px; }
+    .record-table th { font-size: 12px; padding: 0 8px 14px; }
+    .record-table th:first-child { width: 34%; }
+    .record-table th:nth-child(2) { width: 15%; }
+    .record-table th:nth-child(3) { width: 18%; }
+    .record-table th:nth-child(4) { width: 15%; }
+    .record-table th:nth-child(5) { width: 18%; }
+
+    /* Timer: show date input always */
+    .timer-card-wrap .input-field { font-size: 16px; padding: 18px 20px; }
+    .timer-card-wrap .input-label { font-size: 13px; }
 
     /* Subject pills */
     .sub-pill { padding: 9px 18px 9px 13px; font-size: 14px; }
@@ -372,6 +388,9 @@
     .timer-card-wrap {
       max-width: 680px;
       margin: 0 auto;
+    }
+    .timer-card-wrap .card {
+      overflow: visible;
     }
     .timer-ring { width: 260px; height: 260px; }
     .timer-ring-inner { width: 216px; height: 216px; }
@@ -398,6 +417,9 @@
       max-width: 560px;
       padding: 40px 36px 36px;
     }
+
+    /* del button - bigger tap target on tablet */
+    .del-btn { font-size: 20px; padding: 6px 10px; border-radius: 8px; }
 
     /* Section titles */
     .section-title { font-size: 14px; margin-bottom: 16px; }
