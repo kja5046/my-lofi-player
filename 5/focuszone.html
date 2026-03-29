@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FocusOn</title>
+<title>Focuszone</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
@@ -546,18 +546,18 @@ function App() {
   const [sessions, setSessions] = useState(() => JSON.parse(localStorage.getItem('fo_sess') || '[]'));
   const [selectedReport, setSelectedReport] = useState(null);
 
-  // timer state
-  const [time, setTime] = useState(0);
+  // timer state — persisted across refresh
+  const [time, setTime] = useState(() => Number(localStorage.getItem('fo_time') || 0));
   const [isRunning, setIsRunning] = useState(false);
-  const [isFinished, setIsFinished] = useState(false);
+  const [isFinished, setIsFinished] = useState(() => localStorage.getItem('fo_finished') === 'true');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const timerRef = useRef(null);
 
-  // form state
-  const [logDate, setLogDate] = useState(today());
-  const [selectedSub, setSelectedSub] = useState('');
-  const [correct, setCorrect] = useState('');
-  const [total, setTotal] = useState('');
+  // form state — persisted across refresh
+  const [logDate, setLogDate] = useState(() => localStorage.getItem('fo_logdate') || today());
+  const [selectedSub, setSelectedSub] = useState(() => localStorage.getItem('fo_selSub') || '');
+  const [correct, setCorrect] = useState(() => localStorage.getItem('fo_correct') || '');
+  const [total, setTotal] = useState(() => localStorage.getItem('fo_total') || '');
   const [newSubName, setNewSubName] = useState('');
   const [newSubColor, setNewSubColor] = useState(COLORS[0]);
   // ── quiz state ──
@@ -567,6 +567,14 @@ function App() {
     localStorage.setItem('fo_sub', JSON.stringify(subjects));
     localStorage.setItem('fo_sess', JSON.stringify(sessions));
   }, [subjects, sessions]);
+
+  // persist timer state
+  useEffect(() => { localStorage.setItem('fo_time', time); }, [time]);
+  useEffect(() => { localStorage.setItem('fo_finished', isFinished); }, [isFinished]);
+  useEffect(() => { localStorage.setItem('fo_logdate', logDate); }, [logDate]);
+  useEffect(() => { localStorage.setItem('fo_selSub', selectedSub); }, [selectedSub]);
+  useEffect(() => { localStorage.setItem('fo_correct', correct); }, [correct]);
+  useEffect(() => { localStorage.setItem('fo_total', total); }, [total]);
 
   // timer
   useEffect(() => {
@@ -583,6 +591,10 @@ function App() {
     else { setIsRunning(false); setIsFinished(true); }
   };
 
+  const clearTimerStorage = () => {
+    ['fo_time','fo_finished','fo_correct','fo_total'].forEach(k => localStorage.removeItem(k));
+  };
+
   const saveSession = () => {
     const c = Number(correct) || 0, t = Number(total) || 0;
     const score = t > 0 ? Math.round((c / t) * 100) : null;
@@ -590,11 +602,11 @@ function App() {
       id: Date.now(), subject: selectedSub, duration: time,
       score, scoreLabel: t > 0 ? `${c} / ${t}` : '-', date: logDate
     }, ...prev]);
-    setTime(0); setIsFinished(false); setCorrect(''); setTotal(''); setView('home');
+    setTime(0); setIsFinished(false); setCorrect(''); setTotal(''); clearTimerStorage(); setView('home');
   };
 
   const discardSession = () => {
-    setTime(0); setIsFinished(false); setCorrect(''); setTotal('');
+    setTime(0); setIsFinished(false); setCorrect(''); setTotal(''); clearTimerStorage();
   };
 
   // stats helpers
